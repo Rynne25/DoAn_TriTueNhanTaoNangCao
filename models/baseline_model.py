@@ -14,6 +14,8 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
+from models.language import detect_language
+
 # Windows console encoding safeguard
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -78,6 +80,8 @@ class VietnameseFeedbackBaseline:
         max_iter: int = 1000,
         class_weight: str = "balanced",
         random_state: int = 42,
+        default_word_segment: bool = True,
+        language: str = "vi",
     ):
         self.ngram_range = ngram_range
         self.min_df = min_df
@@ -88,6 +92,8 @@ class VietnameseFeedbackBaseline:
         self.max_iter = max_iter
         self.class_weight = class_weight
         self.random_state = random_state
+        self.default_word_segment = bool(default_word_segment)
+        self.language = str(language)
 
         self.vectorizer = TfidfVectorizer(
             ngram_range=ngram_range,
@@ -112,21 +118,27 @@ class VietnameseFeedbackBaseline:
         self.topic_labels = list(TOPIC_LABELS)
         self.is_fitted = False
 
+    def _resolve_word_segment(self, word_segment: Optional[bool]) -> bool:
+        """Resolves effective word segmentation flag, defaulting safely for legacy pickled models."""
+        if word_segment is None:
+            return bool(getattr(self, "default_word_segment", True))
+        return bool(word_segment)
+
     def fit(
         self,
         texts: List[str],
         sentiments: List[int],
         topics: List[int],
-        word_segment: bool = True,
+        word_segment: Optional[bool] = None,
     ) -> "VietnameseFeedbackBaseline":
         """
         Fits the shared TF-IDF vectorizer and both Logistic Regression classifiers.
 
         Args:
-            texts: List of Vietnamese feedback strings (raw or pre-segmented).
+            texts: List of feedback strings (raw or pre-segmented).
             sentiments: Integer sentiment labels in {0, 1, 2}.
             topics: Integer topic labels in {0, 1, 2, 3}.
-            word_segment: If True, ensures PyVi segmentation is applied.
+            word_segment: If True, ensures PyVi segmentation is applied. If None, uses default_word_segment.
 
         Returns:
             self: The fitted model instance.
@@ -137,7 +149,8 @@ class VietnameseFeedbackBaseline:
                 f"sentiments ({len(sentiments)}), topics ({len(topics)})"
             )
 
-        processed_texts = [_segment_text(t) if word_segment else str(t or "") for t in texts]
+        use_ws = self._resolve_word_segment(word_segment)
+        processed_texts = [_segment_text(t) if use_ws else str(t or "") for t in texts]
 
         # Shared feature extraction
         X = self.vectorizer.fit_transform(processed_texts)
@@ -150,7 +163,7 @@ class VietnameseFeedbackBaseline:
         return self
 
     def predict_proba(
-        self, texts: Union[str, List[str]], word_segment: bool = True
+        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Computes calibrated class probabilities for sentiment and topic.
@@ -172,7 +185,8 @@ class VietnameseFeedbackBaseline:
                 np.empty((0, len(TOPIC_MAP)), dtype=np.float64),
             )
 
-        processed = [_segment_text(t) if word_segment else str(t or "") for t in input_list]
+        use_ws = self._resolve_word_segment(word_segment)
+        processed = [_segment_text(t) if use_ws else str(t or "") for t in input_list]
         X = self.vectorizer.transform(processed)
         raw_sent_probs = self.sentiment_clf.predict_proba(X)
         raw_topic_probs = self.topic_clf.predict_proba(X)
@@ -182,7 +196,7 @@ class VietnameseFeedbackBaseline:
         return sent_probs, topic_probs
 
     def predict_labels(
-        self, texts: Union[str, List[str]], word_segment: bool = True
+        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
     ) -> Tuple[List[int], List[int]]:
         """
         Fast vectorized helper returning predicted label IDs.
@@ -198,7 +212,7 @@ class VietnameseFeedbackBaseline:
         return sent_ids, topic_ids
 
     def predict(
-        self, texts: Union[str, List[str]], word_segment: bool = True
+        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         """
         Unified prediction interface conforming strictly to PROJECT.md § Interface Contracts.
@@ -274,9 +288,16 @@ class VietnameseFeedbackBaseline:
             raise FileNotFoundError(f"Baseline model checkpoint not found at '{path}'.")
         loaded = joblib.load(path)
         if isinstance(loaded, cls):
+            if not hasattr(loaded, "default_word_segment"):
+                loaded.default_word_segment = True
+            if not hasattr(loaded, "language"):
+                loaded.language = "vi"
             return loaded
         elif isinstance(loaded, dict):
-            instance = cls()
+            instance = cls(
+                default_word_segment=loaded.get("default_word_segment", True),
+                language=loaded.get("language", "vi"),
+            )
             instance.vectorizer = loaded["vectorizer"]
             instance.sentiment_clf = loaded["sentiment_clf"]
             instance.topic_clf = loaded["topic_clf"]

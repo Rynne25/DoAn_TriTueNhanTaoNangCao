@@ -15,6 +15,8 @@ import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoModel
 
+from models.language import detect_language
+
 # Windows console encoding safeguard
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -66,6 +68,9 @@ class PhoBERTMultiTask(nn.Module):
         num_sentiment: Optional[int] = None,
         num_topic: Optional[int] = None,
         dropout: Optional[float] = None,
+        default_word_segment: bool = True,
+        language: str = "vi",
+        checkpoint_dir: Optional[str] = None,
         **kwargs,
     ):
         super().__init__()
@@ -83,6 +88,9 @@ class PhoBERTMultiTask(nn.Module):
         self.num_topic = num_topic_classes
         self.num_topic_classes = num_topic_classes
         self.dropout_rate = dropout_rate
+        self.default_word_segment = bool(default_word_segment)
+        self.language = str(language)
+        self.checkpoint_dir = checkpoint_dir
 
         # 1. Config initialization
         if config is not None:
@@ -104,6 +112,68 @@ class PhoBERTMultiTask(nn.Module):
 
         self.sentiment_labels = list(SENTIMENT_LABELS)
         self.topic_labels = list(TOPIC_LABELS)
+
+    def _resolve_word_segment(self, word_segment: Optional[bool]) -> bool:
+        """Resolves effective word segmentation flag, defaulting safely for legacy checkpoints."""
+        if word_segment is None:
+            return bool(getattr(self, "default_word_segment", True))
+        return bool(word_segment)
+
+    @staticmethod
+    def _has_tokenizer_artifacts(directory: str) -> bool:
+        artifact_names = (
+            "tokenizer_config.json",
+            "vocab.txt",
+            "vocab.json",
+            "tokenizer.json",
+            "merges.txt",
+            "bpe.codes",
+            "spiece.model",
+            "sentencepiece.bpe.model",
+        )
+        return any(os.path.isfile(os.path.join(directory, name)) for name in artifact_names)
+
+    @staticmethod
+    def _load_tokenizer_from_source(
+        source: str, prefer_fast: bool, local_files_only: bool = False
+    ) -> Any:
+        from transformers import AutoTokenizer
+
+        try:
+            return AutoTokenizer.from_pretrained(
+                source, use_fast=prefer_fast, local_files_only=local_files_only
+            )
+        except Exception:
+            return AutoTokenizer.from_pretrained(
+                source, use_fast=not prefer_fast, local_files_only=local_files_only
+            )
+
+    def _resolve_tokenizer(self) -> Any:
+        base_name = str(getattr(self, "model_name_or_path", "vinai/phobert-base-v2"))
+        ckpt_dir = getattr(self, "checkpoint_dir", None)
+        prefer_fast = "phobert" not in base_name.lower()
+
+        if ckpt_dir and os.path.isdir(ckpt_dir) and self._has_tokenizer_artifacts(ckpt_dir):
+            ckpt_prefer_fast = prefer_fast and not os.path.isfile(os.path.join(ckpt_dir, "bpe.codes"))
+            try:
+                return self._load_tokenizer_from_source(
+                    ckpt_dir, prefer_fast=ckpt_prefer_fast, local_files_only=True
+                )
+            except Exception:
+                try:
+                    return self._load_tokenizer_from_source(
+                        ckpt_dir, prefer_fast=ckpt_prefer_fast, local_files_only=False
+                    )
+                except Exception:
+                    pass
+
+        if os.path.isdir(base_name):
+            return self._load_tokenizer_from_source(
+                base_name, prefer_fast=prefer_fast, local_files_only=True
+            )
+        return self._load_tokenizer_from_source(
+            base_name, prefer_fast=prefer_fast, local_files_only=False
+        )
 
     def forward(
         self,
@@ -172,22 +242,26 @@ class PhoBERTMultiTask(nn.Module):
         device: Optional[Union[str, torch.device]] = None,
         max_length: int = 128,
         batch_size: int = 32,
-        word_segment: bool = True,
+        word_segment: Optional[bool] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Computes calibrated class probabilities for sentiment and topic.
 
         Args:
-            texts: Single string or list of Vietnamese feedback sentences.
-            tokenizer: Hugging Face AutoTokenizer for PhoBERT (or DummyPhoBERTTokenizer).
+            texts: Single string or list of feedback sentences.
+            tokenizer: Hugging Face AutoTokenizer (or DummyPhoBERTTokenizer).
             device: Optional torch device. Defaults to model's current device.
             max_length: Maximum sequence length for truncation/padding.
             batch_size: Mini-batch size for processing multiple texts safely.
             word_segment: If True, applies PyVi word segmentation before tokenization.
+                          If None, resolves via self.default_word_segment.
 
         Returns:
             Tuple of (sentiment_probs, topic_probs) as NumPy arrays.
         """
+        if batch_size <= 0:
+            raise ValueError(f"batch_size must be a positive integer, got {batch_size}.")
+
         if isinstance(texts, str):
             input_list = [texts]
         else:
@@ -200,8 +274,7 @@ class PhoBERTMultiTask(nn.Module):
             )
 
         if tokenizer is None:
-            from transformers import AutoTokenizer
-            tokenizer = AutoTokenizer.from_pretrained(self.model_name_or_path, use_fast=False)
+            tokenizer = self._resolve_tokenizer()
 
         if device is None:
             try:
@@ -211,6 +284,7 @@ class PhoBERTMultiTask(nn.Module):
         else:
             device = torch.device(device)
 
+        use_ws = self._resolve_word_segment(word_segment)
         was_training = self.training
         self.eval()
 
@@ -221,7 +295,10 @@ class PhoBERTMultiTask(nn.Module):
             with torch.no_grad():
                 for start_idx in range(0, len(input_list), batch_size):
                     batch_texts = input_list[start_idx : start_idx + batch_size]
-                    processed = [_segment_text(t) if word_segment else str(t or "") for t in batch_texts]
+                    processed = [
+                        _segment_text(t) if use_ws else ("" if t is None else str(t))
+                        for t in batch_texts
+                    ]
                     encoded = tokenizer(
                         processed,
                         padding=True,
@@ -271,7 +348,7 @@ class PhoBERTMultiTask(nn.Module):
         device: Optional[Union[str, torch.device]] = None,
         max_length: int = 128,
         batch_size: int = 32,
-        word_segment: bool = True,
+        word_segment: Optional[bool] = None,
     ) -> Tuple[List[int], List[int]]:
         """
         Fast vectorized helper returning predicted label IDs.
@@ -300,7 +377,7 @@ class PhoBERTMultiTask(nn.Module):
         device: Optional[Union[str, torch.device]] = None,
         max_length: int = 128,
         batch_size: int = 32,
-        word_segment: bool = True,
+        word_segment: Optional[bool] = None,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
         """
         Unified prediction interface conforming strictly to PROJECT.md § Interface Contracts.
@@ -404,6 +481,8 @@ class PhoBERTMultiTask(nn.Module):
             "num_topic_classes": self.num_topic_classes,
             "dropout_rate": self.dropout_rate,
             "hidden_size": getattr(self.config, "hidden_size", 768),
+            "default_word_segment": bool(getattr(self, "default_word_segment", True)),
+            "language": str(getattr(self, "language", "vi")),
         }
         with open(os.path.join(save_dir, "phobert_multitask_meta.json"), "w", encoding="utf-8") as f:
             json.dump(meta, f, indent=2)
@@ -458,11 +537,17 @@ class PhoBERTMultiTask(nn.Module):
                     "base_model_name_or_path",
                     kwargs.get("model_name_or_path", "vinai/phobert-base-v2"),
                 )
+                default_word_segment = meta.get(
+                    "default_word_segment", kwargs.get("default_word_segment", True)
+                )
+                language = meta.get("language", kwargs.get("language", "vi"))
             else:
                 num_sentiment = kwargs.get("num_sentiment_classes", kwargs.get("num_sentiment", 3))
                 num_topic = kwargs.get("num_topic_classes", kwargs.get("num_topic", 4))
                 dropout_rate = kwargs.get("dropout_rate", kwargs.get("dropout", 0.2))
                 base_model = kwargs.get("model_name_or_path", "vinai/phobert-base-v2")
+                default_word_segment = kwargs.get("default_word_segment", True)
+                language = kwargs.get("language", "vi")
 
             config_file = os.path.join(save_dir_str, "config.json")
             if os.path.isfile(config_file):
@@ -483,6 +568,9 @@ class PhoBERTMultiTask(nn.Module):
                 dropout_rate=dropout_rate,
                 config=config,
                 backbone=backbone,
+                default_word_segment=bool(default_word_segment),
+                language=str(language),
+                checkpoint_dir=os.path.abspath(save_dir_str),
             )
 
             map_location = device if device is not None else "cpu"

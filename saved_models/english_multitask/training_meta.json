@@ -1,0 +1,27 @@
+{
+  "best_epoch": 1,
+  "best_val_mean_macro_f1": 0.9895403363572415,
+  "val_metrics": {
+    "loss": 0.4753138939539591,
+    "sentiment_accuracy": 0.9833333333333333,
+    "sentiment_macro_f1": 0.9832476287530968,
+    "topic_accuracy": 0.9958333333333333,
+    "topic_macro_f1": 0.9958330439613863,
+    "mean_macro_f1": 0.9895403363572415,
+    "eval_time": 1.8724660873413086,
+    "num_samples": 240
+  },
+  "model_name": "distilroberta-base",
+  "language": "en",
+  "word_segment": false,
+  "max_length": 128,
+  "epochs": 1,
+  "batch_size": 32,
+  "lr": 3e-05,
+  "head_lr": 0.00045,
+  "freeze_bottom_layers": 3,
+  "class_weight_power": 0.35,
+  "label_smoothing": 0.03,
+  "quick_run": false,
+  "saved_timestamp": "2026-11-17T06:34:59Z"
+}

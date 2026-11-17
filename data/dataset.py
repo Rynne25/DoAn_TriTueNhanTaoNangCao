@@ -3,10 +3,12 @@ data/dataset.py
 UIT-VSFC Data Loading, PyVi Vietnamese Word Segmentation, and PyTorch Dataset / DataLoader helpers.
 """
 
+import math
 import os
+import random
 import re
 import sys
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -15,6 +17,8 @@ from torch.utils.data import DataLoader, Dataset
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
 
 def _clean_text(s: Optional[str]) -> str:
     """Sanitizes text by converting None to empty string and collapsing duplicate whitespace."""
@@ -22,6 +26,54 @@ def _clean_text(s: Optional[str]) -> str:
         return ""
     text = str(s).strip()
     return re.sub(r"\s+", " ", text)
+
+
+def _resolve_language(language: Optional[str], data_dir: str) -> str:
+    """Validates and resolves dataset language ('vi' or 'en')."""
+    if language is not None:
+        norm = str(language).strip().lower()
+        if norm not in {"vi", "en"}:
+            raise ValueError(f"Unsupported language '{language}'. Must be 'vi' or 'en'.")
+        return norm
+    base = os.path.basename(os.path.normpath(data_dir)).lower()
+    if "english" in base:
+        return "en"
+    return "vi"
+
+
+def _resolve_word_segment(
+    word_segment: Optional[bool], language: Optional[str], data_dir: str
+) -> Tuple[bool, str]:
+    """Resolves effective (word_segment, language) honoring explicit word_segment overrides."""
+    resolved_lang = _resolve_language(language, data_dir)
+    if word_segment is not None:
+        return bool(word_segment), resolved_lang
+    return (resolved_lang == "vi"), resolved_lang
+
+
+def _parse_int_label(val: Any, col_name: str, idx: int, file_path: str) -> int:
+    """Parses a label cell into a strict integer with row-index and column diagnostics."""
+    if val is None or isinstance(val, bool):
+        raise ValueError(
+            f"Invalid {col_name} label at index {idx} in {file_path}: {val!r}. Expected integer."
+        )
+    if isinstance(val, float):
+        if math.isnan(val) or math.isinf(val) or not val.is_integer():
+            raise ValueError(
+                f"Invalid {col_name} label at index {idx} in {file_path}: {val!r}. Expected integer."
+            )
+        return int(val)
+    if isinstance(val, int):
+        return val
+    try:
+        text = str(val).strip()
+        if not text:
+            raise ValueError("empty")
+        return int(text)
+    except (ValueError, TypeError) as exc:
+        raise ValueError(
+            f"Invalid {col_name} label at index {idx} in {file_path}: {val!r}. Expected integer."
+        ) from exc
 
 
 # Official UIT-VSFC Label Mappings
@@ -64,8 +116,8 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
                     f"Parquet file {file_path} missing required columns ('sentence', 'sentiment', 'topic'). Found: {df.columns}"
                 )
             sentences = [_clean_text(s) for s in df[text_col].to_list()]
-            sentiments = [int(s) for s in df["sentiment"].to_list()]
-            topics = [int(t) for t in df["topic"].to_list()]
+            sentiments = [_parse_int_label(s, "sentiment", idx, file_path) for idx, s in enumerate(df["sentiment"].to_list())]
+            topics = [_parse_int_label(t, "topic", idx, file_path) for idx, t in enumerate(df["topic"].to_list())]
             return sentences, sentiments, topics
         except ImportError:
             pass
@@ -81,8 +133,8 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
                     f"Parquet file {file_path} missing required columns ('sentence', 'sentiment', 'topic'). Found: {list(df.columns)}"
                 )
             sentences = [_clean_text(s) for s in df[text_col].tolist()]
-            sentiments = [int(s) for s in df["sentiment"].tolist()]
-            topics = [int(t) for t in df["topic"].tolist()]
+            sentiments = [_parse_int_label(s, "sentiment", idx, file_path) for idx, s in enumerate(df["sentiment"].tolist())]
+            topics = [_parse_int_label(t, "topic", idx, file_path) for idx, t in enumerate(df["topic"].tolist())]
             return sentences, sentiments, topics
         except ImportError:
             raise ImportError(
@@ -102,8 +154,8 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
                     f"CSV file {file_path} missing required columns ('sentence', 'sentiment', 'topic'). Found: {df.columns}"
                 )
             sentences = [_clean_text(s) for s in df[text_col].to_list()]
-            sentiments = [int(s) for s in df["sentiment"].to_list()]
-            topics = [int(t) for t in df["topic"].to_list()]
+            sentiments = [_parse_int_label(s, "sentiment", idx, file_path) for idx, s in enumerate(df["sentiment"].to_list())]
+            topics = [_parse_int_label(t, "topic", idx, file_path) for idx, t in enumerate(df["topic"].to_list())]
             return sentences, sentiments, topics
         except ImportError:
             pass
@@ -119,8 +171,8 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
                     f"CSV file {file_path} missing required columns ('sentence', 'sentiment', 'topic'). Found: {list(df.columns)}"
                 )
             sentences = [_clean_text(s) for s in df[text_col].tolist()]
-            sentiments = [int(s) for s in df["sentiment"].tolist()]
-            topics = [int(t) for t in df["topic"].tolist()]
+            sentiments = [_parse_int_label(s, "sentiment", idx, file_path) for idx, s in enumerate(df["sentiment"].tolist())]
+            topics = [_parse_int_label(t, "topic", idx, file_path) for idx, t in enumerate(df["topic"].tolist())]
             return sentences, sentiments, topics
         except ImportError:
             pass
@@ -136,10 +188,10 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
                 raise ValueError(
                     f"CSV file {file_path} missing required columns ('sentence', 'sentiment', 'topic'). Found: {reader.fieldnames}"
                 )
-            for row in reader:
+            for idx, row in enumerate(reader):
                 sentences.append(_clean_text(row[text_col]))
-                sentiments.append(int(row["sentiment"]))
-                topics.append(int(row["topic"]))
+                sentiments.append(_parse_int_label(row["sentiment"], "sentiment", idx, file_path))
+                topics.append(_parse_int_label(row["topic"], "topic", idx, file_path))
         return sentences, sentiments, topics
 
     else:
@@ -149,36 +201,49 @@ def _read_table_file(file_path: str) -> Tuple[List[str], List[int], List[int]]:
 def load_vsfc_split(
     split_name: str,
     data_dir: str = "data/uit_vsfc",
-    word_segment: bool = True,
+    word_segment: Optional[bool] = None,
     auto_download: bool = True,
+    language: Optional[str] = None,
     **kwargs
 ) -> Tuple[List[str], List[int], List[int]]:
     """
-    Loads an official UIT-VSFC dataset split ('train', 'validation', 'test').
+    Loads a student feedback dataset split ('train', 'validation', 'test').
 
     Args:
         split_name: Name of the split ('train', 'validation'/'val', 'test').
         data_dir: Directory containing the cached parquet or csv files.
                   (Alias 'cache_dir' is also accepted for API compatibility).
         word_segment: If True, applies PyVi Vietnamese word segmentation (e.g. 'giáo_viên').
-        auto_download: If True and dataset files are missing, attempts to download them via
-                       data.download_data.download_vsfc_dataset.
+                      If None, defaults to True for Vietnamese ('vi') and False for English ('en').
+        auto_download: If True and Vietnamese dataset files are missing, attempts to download
+                       them via data.download_data.download_vsfc_dataset.
+        language: Optional language code ('vi' or 'en'). Auto-inferred from data_dir if None.
         **kwargs: Handles backwards compatibility aliases like 'cache_dir'.
 
     Returns:
         Tuple of:
-            texts (List[str]): feedback sentences (word-segmented if word_segment=True).
+            texts (List[str]): feedback sentences (word-segmented if resolved word_segment is True).
             sentiments (List[int]): sentiment labels in {0: negative, 1: neutral, 2: positive}.
             topics (List[int]): topic labels in {0: lecturer, 1: training_program, 2: facility, 3: others}.
 
     Raises:
-        ValueError: If split_name is invalid or labels are out of bounds.
+        ValueError: If split_name/language is invalid, sentences are empty, or labels are out of bounds.
         FileNotFoundError: If the split file is not found in data_dir.
         ImportError: If word_segment=True but pyvi is not installed.
     """
     # Support cache_dir alias from PROJECT.md
     if "cache_dir" in kwargs:
         data_dir = kwargs["cache_dir"]
+
+    resolved_ws, resolved_lang = _resolve_word_segment(word_segment, language, data_dir)
+
+    # Optional PROJECT_ROOT fallback for default relative data directories when invoked outside repo root
+    norm_rel = os.path.normpath(data_dir)
+    if norm_rel in (os.path.normpath("data/uit_vsfc"), os.path.normpath("data/english_feedback")):
+        if not os.path.isdir(data_dir):
+            candidate_root_dir = os.path.join(PROJECT_ROOT, norm_rel)
+            if os.path.isdir(candidate_root_dir):
+                data_dir = candidate_root_dir
 
     # Normalize split name
     norm_split = split_name.strip().lower()
@@ -195,12 +260,13 @@ def load_vsfc_split(
     csv_path = os.path.join(data_dir, f"{norm_split}.csv")
 
     target_file = None
+    download_err: Optional[Exception] = None
     if os.path.isfile(parquet_path):
         target_file = parquet_path
     elif os.path.isfile(csv_path):
         target_file = csv_path
-    elif auto_download:
-        # Try importing download_data and running it
+    elif auto_download and resolved_lang == "vi":
+        # Try importing download_data and running it for Vietnamese UIT-VSFC
         try:
             from data.download_data import download_vsfc_dataset
             print(f"[dataset.py] Split '{norm_split}' not found locally. Auto-downloading to '{data_dir}'...")
@@ -209,19 +275,30 @@ def load_vsfc_split(
                 target_file = parquet_path
             elif os.path.isfile(csv_path):
                 target_file = csv_path
-        except (ImportError, Exception) as err:
-            # Fall through to FileNotFoundError below
-            pass
+        except Exception as err:
+            download_err = err
 
     if target_file is None:
-        raise FileNotFoundError(
+        msg = (
             f"Dataset file for split '{split_name}' (normalized: '{norm_split}') not found in '{data_dir}'. "
-            f"Looked for '{parquet_path}' and '{csv_path}'. "
-            f"Please run 'python data/download_data.py' first."
+            f"Looked for '{parquet_path}' and '{csv_path}'."
         )
+        if resolved_lang == "vi":
+            msg += " Please run 'python data/download_data.py' first."
+        else:
+            msg += " Please prepare English dataset splits first."
+        if download_err is not None:
+            msg += f" Auto-download error ({type(download_err).__name__}): {download_err}"
+            raise FileNotFoundError(msg) from download_err
+        raise FileNotFoundError(msg)
 
     # Read data from file
     texts, sentiments, topics = _read_table_file(target_file)
+
+    # Validate non-empty cleaned sentences
+    for idx, text in enumerate(texts):
+        if not text:
+            raise ValueError(f"Empty or null sentence at index {idx} in {target_file}.")
 
     # Validate label ranges
     # Sentiments must be in [0, 2]
@@ -239,7 +316,7 @@ def load_vsfc_split(
             )
 
     # Apply PyVi word segmentation if requested
-    if word_segment:
+    if resolved_ws:
         try:
             from pyvi import ViTokenizer
         except ImportError:
@@ -405,9 +482,11 @@ def get_dataloaders(
     batch_size: int = 16,
     max_length: int = 128,
     data_dir: str = "data/uit_vsfc",
-    word_segment: bool = True,
+    word_segment: Optional[bool] = None,
     num_workers: int = 0,
     quick_mode: bool = False,
+    language: Optional[str] = None,
+    use_fast: Optional[bool] = None,
     **kwargs
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
@@ -415,13 +494,16 @@ def get_dataloaders(
 
     Args:
         tokenizer: Hugging Face tokenizer instance (or Hugging Face model identifier string,
-                   e.g. 'vinai/phobert-base-v2').
+                   e.g. 'vinai/phobert-base-v2' or 'distilroberta-base').
         batch_size: Batch size for DataLoader (default: 16).
-        max_length: Maximum sequence length for PhoBERT (default: 128).
-        data_dir: Directory containing UIT-VSFC split files (default: 'data/uit_vsfc').
+        max_length: Maximum sequence length for Transformer tokenization (default: 128).
+        data_dir: Directory containing split files (default: 'data/uit_vsfc').
         word_segment: If True, applies PyVi word segmentation before tokenization.
+                      If None, defaults to True for 'vi' and False for 'en'.
         num_workers: Number of DataLoader worker threads (default: 0 for Windows compatibility).
         quick_mode: If True, only loads a small subset (e.g. 64 train, 32 val, 32 test) for fast tests.
+        language: Optional language code ('vi' or 'en').
+        use_fast: Optional fast-tokenizer flag when tokenizer is a string. Auto-selected if None.
 
     Returns:
         Tuple of (train_loader, val_loader, test_loader).
@@ -430,28 +512,35 @@ def get_dataloaders(
     if "cache_dir" in kwargs:
         data_dir = kwargs["cache_dir"]
 
+    resolved_ws, resolved_lang = _resolve_word_segment(word_segment, language, data_dir)
+
     # If a string identifier is passed, automatically load the tokenizer
     if isinstance(tokenizer, str):
         try:
             from transformers import AutoTokenizer
-            tokenizer = AutoTokenizer.from_pretrained(tokenizer, use_fast=False)
         except ImportError:
             raise ImportError(
                 "transformers is required when passing a model name string to get_dataloaders. "
                 "Install with: python -m pip install transformers"
             )
+        model_id = tokenizer
+        resolved_fast = ("phobert" not in model_id.lower()) if use_fast is None else bool(use_fast)
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=resolved_fast)
+        except Exception:
+            tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=not resolved_fast)
 
     # 1. Load train split
     train_texts, train_sents, train_topics = load_vsfc_split(
-        "train", data_dir=data_dir, word_segment=word_segment, **kwargs
+        "train", data_dir=data_dir, word_segment=resolved_ws, language=resolved_lang, **kwargs
     )
     # 2. Load validation split
     val_texts, val_sents, val_topics = load_vsfc_split(
-        "validation", data_dir=data_dir, word_segment=word_segment, **kwargs
+        "validation", data_dir=data_dir, word_segment=resolved_ws, language=resolved_lang, **kwargs
     )
     # 3. Load test split
     test_texts, test_sents, test_topics = load_vsfc_split(
-        "test", data_dir=data_dir, word_segment=word_segment, **kwargs
+        "test", data_dir=data_dir, word_segment=resolved_ws, language=resolved_lang, **kwargs
     )
 
     if quick_mode:
@@ -459,17 +548,27 @@ def get_dataloaders(
         subset_val = min(len(val_texts), max(batch_size * 2, 32))
         subset_test = min(len(test_texts), max(batch_size * 2, 32))
 
-        train_texts = train_texts[:subset_train]
-        train_sents = train_sents[:subset_train]
-        train_topics = train_topics[:subset_train]
+        rng = random.Random(42)
 
-        val_texts = val_texts[:subset_val]
-        val_sents = val_sents[:subset_val]
-        val_topics = val_topics[:subset_val]
+        def _deterministic_subset(
+            t_list: List[str], s_list: List[int], top_list: List[int], limit: int
+        ) -> Tuple[List[str], List[int], List[int]]:
+            if len(t_list) <= limit:
+                return t_list, s_list, top_list
+            indices = list(range(len(t_list)))
+            rng.shuffle(indices)
+            chosen = indices[:limit]
+            return [t_list[i] for i in chosen], [s_list[i] for i in chosen], [top_list[i] for i in chosen]
 
-        test_texts = test_texts[:subset_test]
-        test_sents = test_sents[:subset_test]
-        test_topics = test_topics[:subset_test]
+        train_texts, train_sents, train_topics = _deterministic_subset(
+            train_texts, train_sents, train_topics, subset_train
+        )
+        val_texts, val_sents, val_topics = _deterministic_subset(
+            val_texts, val_sents, val_topics, subset_val
+        )
+        test_texts, test_sents, test_topics = _deterministic_subset(
+            test_texts, test_sents, test_topics, subset_test
+        )
 
     train_loader = create_dataloader(
         texts=train_texts,

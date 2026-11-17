@@ -15,10 +15,10 @@ env/
 .agents/
 
 # Large model weight binaries (>100MB GitHub limit)
-# Re-generate locally or on GPU via: python training/train_phobert.py
-saved_models/phobert_multitask/*.pt
-saved_models/phobert_multitask/*.bin
-saved_models/phobert_multitask/*.safetensors
+# Re-generate locally via training scripts or download from checkpoints
+saved_models/*/*.pt
+saved_models/*/*.bin
+saved_models/*/*.safetensors
 
 # IDE / OS junk
 .DS_Store

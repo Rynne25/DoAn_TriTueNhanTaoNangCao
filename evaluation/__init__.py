@@ -6,6 +6,7 @@ Comparative evaluation and reporting artifacts for Vietnamese Student Feedback C
 from evaluation.evaluate import (
     compute_comparisons,
     evaluate_baseline,
+    evaluate_majority_baseline,
     evaluate_phobert,
     format_terminal_table,
     generate_json_report,
@@ -16,6 +17,7 @@ from evaluation.evaluate import (
 
 __all__ = [
     "evaluate_baseline",
+    "evaluate_majority_baseline",
     "evaluate_phobert",
     "compute_comparisons",
     "format_terminal_table",

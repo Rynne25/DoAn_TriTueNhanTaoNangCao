@@ -127,7 +127,8 @@ def _extract_frozen_layer_cache(
             )
             hidden = emb
             for layer in encoder_layers:
-                hidden = layer(hidden, attention_mask=ext_mask)
+                layer_out = layer(hidden, attention_mask=ext_mask)
+                hidden = layer_out[0] if isinstance(layer_out, tuple) else layer_out
             cached.append((
                 hidden.to(dtype=torch.float16).cpu(),
                 ext_mask.cpu(),
@@ -271,6 +272,15 @@ def evaluate(
     }
 
 
+def _load_training_tokenizer(model_name: str) -> Any:
+    """Loads Hugging Face tokenizer with fast/slow fallback appropriate for VI PhoBERT or EN backbones."""
+    prefer_fast = "phobert" not in model_name.lower()
+    try:
+        return AutoTokenizer.from_pretrained(model_name, use_fast=prefer_fast)
+    except Exception:
+        return AutoTokenizer.from_pretrained(model_name, use_fast=not prefer_fast)
+
+
 def train_phobert(
     epochs: int = 3,
     batch_size: int = 32,
@@ -279,9 +289,9 @@ def train_phobert(
     weight_decay: float = 0.01,
     max_length: int = 128,
     warmup_ratio: float = 0.1,
-    model_name: str = "vinai/phobert-base-v2",
-    save_dir: str = "saved_models/phobert_multitask",
-    data_dir: str = "data/uit_vsfc",
+    model_name: Optional[str] = None,
+    save_dir: Optional[str] = None,
+    data_dir: Optional[str] = None,
     quick_run: bool = False,
     no_amp: bool = False,
     eval_test: bool = True,
@@ -290,13 +300,30 @@ def train_phobert(
     freeze_bottom_layers: int = -1,
     class_weight_power: float = 0.35,
     label_smoothing: float = 0.03,
+    language: str = "vi",
+    word_segment: Optional[bool] = None,
 ) -> Tuple[PhoBERTMultiTask, Dict[str, Any]]:
     """
-    Main training function for fine-tuning PhoBERT Multi-Task model on UIT-VSFC.
+    Main training function for fine-tuning Transformer Multi-Task model on VI/EN feedback.
 
     Returns:
         Tuple of (best_model, training_summary_dict).
     """
+    resolved_lang = str(language).strip().lower()
+    if resolved_lang not in {"vi", "en"}:
+        raise ValueError(f"Unsupported language '{language}'. Must be 'vi' or 'en'.")
+
+    resolved_model_name = model_name if model_name is not None else (
+        "vinai/phobert-base-v2" if resolved_lang == "vi" else "distilroberta-base"
+    )
+    resolved_save_dir = save_dir if save_dir is not None else (
+        "saved_models/phobert_multitask" if resolved_lang == "vi" else "saved_models/english_multitask"
+    )
+    resolved_data_dir = data_dir if data_dir is not None else (
+        "data/uit_vsfc" if resolved_lang == "vi" else "data/english_feedback"
+    )
+    resolved_ws = (resolved_lang == "vi") if word_segment is None else bool(word_segment)
+
     set_seed(seed)
     total_start_time = time.time()
 
@@ -315,16 +342,17 @@ def train_phobert(
         scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
 
     # 2. Tokenizer & DataLoaders
-    print(f"[1/5] Loading tokenizer '{model_name}' (use_fast=False)...")
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    print(f"[1/5] Loading tokenizer '{resolved_model_name}' (language={resolved_lang})...")
+    tokenizer = _load_training_tokenizer(resolved_model_name)
 
-    print(f"[2/5] Initializing UIT-VSFC DataLoaders from '{data_dir}'...")
+    print(f"[2/5] Initializing DataLoaders from '{resolved_data_dir}' (word_segment={resolved_ws})...")
     raw_train_loader, raw_val_loader, raw_test_loader = get_dataloaders(
         tokenizer=tokenizer,
         batch_size=batch_size,
         max_length=max_length,
-        data_dir=data_dir,
-        word_segment=True,
+        data_dir=resolved_data_dir,
+        word_segment=resolved_ws,
+        language=resolved_lang,
         num_workers=0,
         quick_mode=quick_run,
     )
@@ -335,29 +363,47 @@ def train_phobert(
     # 3. Model Architecture Initialization
     print(f"[3/5] Instantiating PhoBERTMultiTask model...")
     model = PhoBERTMultiTask(
-        model_name_or_path=model_name,
+        model_name_or_path=resolved_model_name,
         num_sentiment_classes=3,
         num_topic_classes=4,
         dropout_rate=0.2,
+        default_word_segment=resolved_ws,
+        language=resolved_lang,
     )
     model.to(device)
 
-    total_encoder_layers = len(getattr(getattr(model.phobert, "encoder", None), "layer", []))
+    has_roberta_encoder = (
+        hasattr(model.phobert, "embeddings")
+        and hasattr(model.phobert, "encoder")
+        and hasattr(model.phobert.encoder, "layer")
+    )
+    can_cache_frozen = has_roberta_encoder and hasattr(model.phobert, "_create_attention_masks")
+    total_encoder_layers = len(model.phobert.encoder.layer) if has_roberta_encoder else 0
     if freeze_bottom_layers < 0:
-        resolved_freeze = 6 if (device.type == "cpu" and not quick_run and total_encoder_layers >= 12) else 0
+        if device.type == "cpu" and not quick_run and has_roberta_encoder:
+            if total_encoder_layers >= 12:
+                resolved_freeze = 6
+            elif total_encoder_layers >= 6:
+                resolved_freeze = total_encoder_layers // 2
+            else:
+                resolved_freeze = 0
+        else:
+            resolved_freeze = 0
     else:
-        resolved_freeze = min(freeze_bottom_layers, max(0, total_encoder_layers - 1))
+        resolved_freeze = min(freeze_bottom_layers, max(0, total_encoder_layers - 1)) if has_roberta_encoder else 0
 
-    if resolved_freeze > 0:
+    if resolved_freeze > 0 and has_roberta_encoder:
         for param in model.phobert.embeddings.parameters():
             param.requires_grad = False
         for layer in model.phobert.encoder.layer[:resolved_freeze]:
             for param in layer.parameters():
                 param.requires_grad = False
 
+    use_cached_top = (resolved_freeze > 0) and (device.type == "cpu") and (not quick_run) and can_cache_frozen
+
     print("=" * 65)
-    print("  PHOBERT MULTI-TASK FINE-TUNING PIPELINE")
-    print(f"  Backbone: {model_name} | Shared CLS + Dual Heads")
+    print(f"  MULTI-TASK TRANSFORMER FINE-TUNING PIPELINE ({resolved_lang.upper()})")
+    print(f"  Backbone: {resolved_model_name} | Shared CLS + Dual Heads")
     print("=" * 65)
     print(f"  Device:          {device.type.upper()}")
     if device.type == "cuda":
@@ -368,9 +414,9 @@ def train_phobert(
     else:
         print(f"  Mixed Precision: Disabled (CPU execution, threads={torch.get_num_threads()})")
     print(f"  Hyperparameters: epochs={epochs}, batch_size={batch_size}, lr={lr}, head_lr={resolved_head_lr}, max_len={max_length}")
-    print(f"  Frozen Bottom:   {resolved_freeze}/{total_encoder_layers} encoder layers (Cached Top-Layer Mode: {resolved_freeze > 0 and device.type == 'cpu'})")
+    print(f"  Frozen Bottom:   {resolved_freeze}/{total_encoder_layers} encoder layers (Cached Top-Layer Mode: {use_cached_top})")
     print(f"  Quick Run Mode:  {quick_run}")
-    print(f"  Checkpoint Path: {os.path.abspath(save_dir)}")
+    print(f"  Checkpoint Path: {os.path.abspath(resolved_save_dir)}")
     print("=" * 65 + "\n")
 
     # Compute smoothed class weights on training split
@@ -385,7 +431,6 @@ def train_phobert(
     if t_weights is not None:
         t_weights = t_weights.to(device)
 
-    use_cached_top = (resolved_freeze > 0) and (device.type == "cpu") and (not quick_run)
     cached_batches: Optional[List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]]] = None
     if use_cached_top:
         bucket_train_loader = _build_bucketed_loader(raw_train_loader.dataset, batch_size=batch_size, shuffle_batches=True, seed=seed)
@@ -467,7 +512,8 @@ def train_phobert(
                 t_labels = t_cpu.to(device=device)
 
                 for layer in top_layers:
-                    hidden = layer(hidden, attention_mask=ext_mask)
+                    layer_out = layer(hidden, attention_mask=ext_mask)
+                    hidden = layer_out[0] if isinstance(layer_out, tuple) else layer_out
                 cls_rep = model.dropout(hidden[:, 0, :])
                 s_logits = model.sentiment_classifier(cls_rep)
                 t_logits = model.topic_classifier(cls_rep)
@@ -560,17 +606,19 @@ def train_phobert(
             best_val_metrics = val_metrics
 
             print(f"  [*] New Best Validation Mean Macro-F1: {best_mean_macro_f1 * 100:.2f}% (Epoch {epoch})")
-            print(f"      Saving checkpoint & tokenizer to '{save_dir}'...")
+            print(f"      Saving checkpoint & tokenizer to '{resolved_save_dir}'...")
 
-            os.makedirs(save_dir, exist_ok=True)
-            model.save_pretrained(save_dir)
-            tokenizer.save_pretrained(save_dir)
+            os.makedirs(resolved_save_dir, exist_ok=True)
+            model.save_pretrained(resolved_save_dir)
+            tokenizer.save_pretrained(resolved_save_dir)
 
             meta_data = {
                 "best_epoch": best_epoch,
                 "best_val_mean_macro_f1": best_mean_macro_f1,
                 "val_metrics": val_metrics,
-                "model_name": model_name,
+                "model_name": resolved_model_name,
+                "language": resolved_lang,
+                "word_segment": resolved_ws,
                 "max_length": max_length,
                 "epochs": epochs,
                 "batch_size": batch_size,
@@ -582,18 +630,21 @@ def train_phobert(
                 "quick_run": quick_run,
                 "saved_timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             }
-            with open(os.path.join(save_dir, "training_meta.json"), "w", encoding="utf-8") as f:
+            with open(os.path.join(resolved_save_dir, "training_meta.json"), "w", encoding="utf-8") as f:
                 json.dump(meta_data, f, indent=2)
 
     if cached_batches is not None:
         del cached_batches
         gc.collect()
 
-    # 6. Post-training Evaluation on Test Split
+    # 6. Reload Best Checkpoint & Post-training Evaluation on Test Split
+    best_model = model
+    if best_epoch > 0 and os.path.isdir(resolved_save_dir):
+        best_model = PhoBERTMultiTask.from_pretrained(resolved_save_dir, device=device)
+
     test_metrics: Dict[str, float] = {}
-    if eval_test and os.path.isdir(save_dir):
-        print(f"\n[5/5] Loading Best Checkpoint (Epoch {best_epoch}) for Test Split Evaluation...")
-        best_model = PhoBERTMultiTask.from_pretrained(save_dir, device=device)
+    if eval_test and best_epoch > 0 and os.path.isdir(resolved_save_dir):
+        print(f"\n[5/5] Evaluating Best Checkpoint (Epoch {best_epoch}) on Test Split...")
         test_metrics = evaluate(
             model=best_model,
             dataloader=test_loader,
@@ -602,18 +653,18 @@ def train_phobert(
             show_report=show_report,
         )
 
-        with open(os.path.join(save_dir, "test_metrics.json"), "w", encoding="utf-8") as f:
+        with open(os.path.join(resolved_save_dir, "test_metrics.json"), "w", encoding="utf-8") as f:
             json.dump(test_metrics, f, indent=2)
 
     total_duration = time.time() - total_start_time
     print("\n" + "=" * 65)
-    print(f"  PHOBERT FINE-TUNING COMPLETE ({total_duration:.2f}s total)")
+    print(f"  TRANSFORMER FINE-TUNING COMPLETE ({total_duration:.2f}s total)")
     print(f"  Best Validation Epoch:     {best_epoch}")
     print(f"  Best Validation Mean F1:   {best_mean_macro_f1 * 100:.2f}%")
     if test_metrics:
         print(f"  Test Sentiment Macro-F1:   {test_metrics.get('sentiment_macro_f1', 0.0) * 100:.2f}%")
         print(f"  Test Topic Macro-F1:       {test_metrics.get('topic_macro_f1', 0.0) * 100:.2f}%")
-    print(f"  Checkpoint Directory:      {os.path.abspath(save_dir)}")
+    print(f"  Checkpoint Directory:      {os.path.abspath(resolved_save_dir)}")
     print("=" * 65 + "\n")
 
     summary = {
@@ -622,14 +673,18 @@ def train_phobert(
         "test_metrics": test_metrics,
         "history": history,
         "total_duration": total_duration,
-        "save_dir": os.path.abspath(save_dir),
+        "save_dir": os.path.abspath(resolved_save_dir),
+        "language": resolved_lang,
+        "word_segment": resolved_ws,
+        "model_name": resolved_model_name,
     }
 
     # Save complete training history
-    with open(os.path.join(save_dir, "history.json"), "w", encoding="utf-8") as f:
+    os.makedirs(resolved_save_dir, exist_ok=True)
+    with open(os.path.join(resolved_save_dir, "history.json"), "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
 
-    return model, summary
+    return best_model, summary
 
 
 def main():
@@ -697,22 +752,34 @@ def main():
         help="Cross-entropy label smoothing factor (default: 0.03)",
     )
     parser.add_argument(
+        "--language",
+        type=str,
+        choices=["vi", "en"],
+        default="vi",
+        help="Dataset/model language ('vi' or 'en', default: vi)",
+    )
+    parser.add_argument(
+        "--no_word_segment",
+        action="store_true",
+        help="Disable PyVi word segmentation (always disabled by default when --language en)",
+    )
+    parser.add_argument(
         "--model_name",
         type=str,
-        default="vinai/phobert-base-v2",
-        help="Pretrained PhoBERT model identifier (default: vinai/phobert-base-v2)",
+        default=None,
+        help="Pretrained transformer model identifier (default: vinai/phobert-base-v2 for vi, distilroberta-base for en)",
     )
     parser.add_argument(
         "--save_dir",
         type=str,
-        default="saved_models/phobert_multitask",
-        help="Destination directory for best checkpoint and tokenizer (default: saved_models/phobert_multitask)",
+        default=None,
+        help="Destination directory for best checkpoint and tokenizer (default: saved_models/phobert_multitask for vi, saved_models/english_multitask for en)",
     )
     parser.add_argument(
         "--data_dir",
         type=str,
-        default="data/uit_vsfc",
-        help="Path to UIT-VSFC dataset splits directory (default: data/uit_vsfc)",
+        default=None,
+        help="Path to dataset splits directory (default: data/uit_vsfc for vi, data/english_feedback for en)",
     )
     parser.add_argument(
         "--quick_run",
@@ -742,6 +809,7 @@ def main():
     )
 
     args = parser.parse_args()
+    resolved_ws = False if (args.no_word_segment or args.language == "en") else True
 
     train_phobert(
         epochs=args.epochs,
@@ -762,6 +830,8 @@ def main():
         freeze_bottom_layers=args.freeze_bottom_layers,
         class_weight_power=args.class_weight_power,
         label_smoothing=args.label_smoothing,
+        language=args.language,
+        word_segment=resolved_ws,
     )
 
 

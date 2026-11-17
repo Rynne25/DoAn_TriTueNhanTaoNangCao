@@ -101,7 +101,18 @@ def _download_stream_to_file(url: str, dest_path: str, retries: int = 3, timeout
             else:
                 break
 
-    raise RuntimeError(f"Failed to download {url} after {retries} attempts: {last_exception}")
+    raise RuntimeError(f"Failed to download {url} after {retries} attempts: {last_exception}") from last_exception
+
+
+def _is_valid_cached_parquet(path: str) -> bool:
+    """Validates that a cached parquet file exists, is non-trivial in size, and starts with b'PAR1'."""
+    try:
+        if not os.path.isfile(path) or os.path.getsize(path) <= 1000:
+            return False
+        with open(path, "rb") as f:
+            return f.read(4) == b"PAR1"
+    except OSError:
+        return False
 
 
 def download_vsfc_dataset(
@@ -142,7 +153,7 @@ def download_vsfc_dataset(
         target_parquet = os.path.join(output_dir, f"{split}.parquet")
 
         # Caching check
-        if os.path.exists(target_parquet) and os.path.getsize(target_parquet) > 1000 and not force:
+        if _is_valid_cached_parquet(target_parquet) and not force:
             size_bytes = os.path.getsize(target_parquet)
             print(f"[*] {split:10s} : CACHED ({size_bytes:,} bytes) -> {target_parquet}")
             results[split] = target_parquet
@@ -219,6 +230,12 @@ def _verify_dataset_summary(results: Dict[str, str]) -> None:
         if row_count is not None and expected is not None:
             status = "MATCH" if row_count == expected else f"MISMATCH (expected {expected})"
             print(f"Validation: {split:10s} | Rows: {row_count:,} [{status}]")
+        elif row_count is None:
+            file_size = os.path.getsize(path)
+            print(
+                f"[WARN] Validation: {split:10s} | Size: {file_size:,} bytes "
+                "[SKIPPED ROW CHECK: neither 'polars' nor 'pandas' is installed]"
+            )
         else:
             file_size = os.path.getsize(path)
             print(f"Validation: {split:10s} | Size: {file_size:,} bytes [OK]")

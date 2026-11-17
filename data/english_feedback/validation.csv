@@ -1,0 +1,241 @@
+sentence,sentiment,topic
+"The student affairs office offers delicious, clean, and nutritious meals at very affordable student prices, setting a wonderful benchmark for student services.",2,3
+"The campus dining hall is remarkably polite, helpful, and resolves student requests in minutes, setting a wonderful benchmark for student services.",2,3
+"The university extracurricular clubs organizes vibrant clubs and exciting community activities, and students feel genuinely cared for and supported.",2,3
+"The faculty mentor always provides detailed and constructive feedback on coursework, and I learned an immense amount from their guidance.",2,0
+"The lecturer just reads the slides verbatim without any explanation, making the course stressful and unhelpful.",0,0
+"The campus Wi-Fi network has outdated hardware that cannot run modern software tools, severely disrupting our ability to concentrate on learning.",0,2
+"The instructor shares practical industry experience that enriches every lesson, which helped me improve my academic performance significantly.",2,0
+"The student service center handles course registration with ordinary queue delays, and student life proceeds as expected.",1,3
+"The study areas function at a basic level with acceptable internet speed, sufficient to conduct the lectures without major disruption.",1,2
+"The student support center provides generous scholarship programs and clear academic guidance, making campus life welcoming, vibrant, and enjoyable.",2,3
+"The instructor always provides detailed and constructive feedback on coursework, making this one of the most rewarding courses of the semester.",2,0
+"The high-speed campus Wi-Fi offers excellent multimedia tools that enhance presentation clarity, and students are very pleased with the university investment.",2,2
+"The training program focuses far too much on abstract theory with zero practical application, and students feel they wasted valuable study time.",0,1
+"The laboratory syllabus assigns obsolete tools that are no longer used in companies, and students feel they wasted valuable study time.",0,1
+"The curriculum presents standard foundational knowledge at an average pace, and can be completed without excessive difficulty.",1,1
+"The degree module is poorly structured with redundant overlapping chapters, failing to provide meaningful engineering skills.",0,1
+"The campus parking lot is dangerously overcrowded with severe vehicle congestion and scratches, imposing unreasonable financial and administrative burdens.",0,3
+"The laboratory syllabus assigns obsolete tools that are no longer used in companies, making the subject feel boring and irrelevant.",0,1
+"The degree curriculum is exceptionally well-designed with cutting-edge industry technologies, and the content is both intellectually stimulating and useful.",2,1
+"The degree module progresses at a disjointed and chaotic pace, which causes unnecessary burnout and stress.",0,1
+"The visiting professor arrives late to class and dismisses questions abruptly, making it very difficult to follow the lectures.",0,0
+"The classroom projector produces annoying loud buzzing noises and flickering display lights, making physical attendance unpleasant and exhausting.",0,2
+"The lecture room equipment offer usable hardware suitable for running basic office tools, sufficient to conduct the lectures without major disruption.",1,2
+"The university learning facilities is state-of-the-art with high-performance workstations and crisp 4K projectors, providing a first-class learning experience.",2,2
+"The study module contains acceptable course assignments and standard exam formats, meeting standard university guidelines.",1,1
+"The lecturer has an average teaching style typical of university lecturers, comparable to most other instructors.",1,0
+"The instructor makes difficult topics easy to grasp with vivid real-life examples, and I learned an immense amount from their guidance.",2,0
+"The academic program follows a conventional structure similar to standard textbooks, similar to other courses in the same department.",1,1
+"The campus Wi-Fi network is old, defective, and lacks sufficient power outlets, which wastes valuable lecture and laboratory time.",0,2
+"The new lecture hall is equipped with brand-new ergonomic chairs and spacious power-equipped desks, providing a first-class learning experience.",2,2
+"The study module presents standard foundational knowledge at an average pace, similar to other courses in the same department.",1,1
+"The professor explains complex algorithms with incredible clarity and patience, creating an enjoyable and stimulating classroom atmosphere.",2,0
+"The academic program has a normal workload that can be managed with consistent effort, which is satisfactory for general degree requirements.",1,1
+"The training program is exceptionally well-designed with cutting-edge industry technologies, giving students a strong competitive advantage in the job market.",2,1
+"The adjunct lecturer has a very disorganized teaching style that confuses everyone, so the entire class struggled to understand the topic.",0,0
+"The curriculum has a normal workload that can be managed with consistent effort, meeting standard university guidelines.",1,1
+"The financial aid and scholarship office has a fast, intuitive online portal for seamless tuition payment and scheduling, making campus life welcoming, vibrant, and enjoyable.",2,3
+"The high-speed campus Wi-Fi features modern hardware that handles demanding software effortlessly, and students are very pleased with the university investment.",2,2
+"The air conditioning system produces annoying loud buzzing noises and flickering display lights, creating an uncomfortable and frustrating classroom environment.",0,2
+"The university learning facilities maintains a cool, quiet, and spotless study environment, providing a first-class learning experience.",2,2
+"The faculty mentor always provides detailed and constructive feedback on coursework, making this one of the most rewarding courses of the semester.",2,0
+"The professor follows the lecture slides strictly with moderate pacing, which is adequate for passing the course.",1,0
+"The student service center offers standard food options at typical local student prices, in line with general university operational standards.",1,3
+"The lecturer ignores student questions during class discussions, which ruins the whole learning experience.",0,0
+"The campus Wi-Fi network lacks clean and properly maintained working spaces, which wastes valuable lecture and laboratory time.",0,2
+"The instructor lacks enthusiasm and seems completely unprepared, so the entire class struggled to understand the topic.",0,0
+"The visiting professor explains concepts in a confusing and monotonous manner, so the entire class struggled to understand the topic.",0,0
+"The classroom facilities function at a basic level with acceptable internet speed, without any major advantages or intolerable flaws.",1,2
+"The lecturer gives ambiguous exam requirements that lead to poor scores, making the course stressful and unhelpful.",0,0
+"The campus parking facilities processes document requests within standard turnaround times, without notable problems or extraordinary service.",1,3
+"The teaching assistant speaks too fast and rushes through slides, which ruins the whole learning experience.",0,0
+"The degree module progresses at a disjointed and chaotic pace, making the subject feel boring and irrelevant.",0,1
+"The instructor demonstrates deep mastery and inspires students to study further, making this one of the most rewarding courses of the semester.",2,0
+"Our course teacher explains complex algorithms with incredible clarity and patience, which helped me improve my academic performance significantly.",2,0
+"The course coordinator provides standard feedback on assignments, which is adequate for passing the course.",1,0
+"The lab tutor lacks enthusiasm and seems completely unprepared, making it very difficult to follow the lectures.",0,0
+"The classroom projector fails to cool the room during hot afternoons making it suffocating, creating an uncomfortable and frustrating classroom environment.",0,2
+"The student affairs office maintains an efficient, spacious parking system with attentive staff, building a strong sense of community and pride.",2,3
+"The lecture hall furniture suffers from broken chairs, squeaky tables, and dim lighting, which wastes valuable lecture and laboratory time.",0,2
+"The administrative student affairs office serves overpriced food with questionable cleanliness and tiny portions, which ruins the non-academic student experience.",0,3
+"The digital library features modern hardware that handles demanding software effortlessly, creating an ideal and comfortable setting for focused research and study.",2,2
+"The lecturer shares practical industry experience that enriches every lesson, and students truly appreciate their dedication.",2,0
+"The university tuition payment schedule processes document requests within standard turnaround times, meeting standard procedural requirements.",1,3
+"The training program features practical case studies that reinforce problem-solving ability, which significantly boosted our practical software development skills.",2,1
+"The laboratory program is exceptionally well-designed with cutting-edge industry technologies, making the course highly practical, relevant, and inspiring.",2,1
+"The study module is exceptionally well-designed with cutting-edge industry technologies, and the content is both intellectually stimulating and useful.",2,1
+"Our teacher delivers standard lectures according to the textbook, neither particularly inspiring nor bad.",1,0
+"The university learning facilities maintains a cool, quiet, and spotless study environment, and students are very pleased with the university investment.",2,2
+"The campus Wi-Fi network suffers from broken chairs, squeaky tables, and dim lighting, and students have repeatedly complained to no avail.",0,2
+"The course syllabus covers standard topics expected in an undergraduate program, meeting standard university guidelines.",1,1
+"The classroom facilities offer usable hardware suitable for running basic office tools, comparable to standard public university classrooms.",1,2
+"The academic program covers standard topics expected in an undergraduate program, providing an ordinary educational foundation.",1,1
+"The university tuition fee has extremely rude staff and inefficient bureaucratic delays, leaving students frustrated with university management.",0,3
+"The lecturer rarely responds to student emails or consultation requests, so the entire class struggled to understand the topic.",0,0
+"The course roadmap progresses at a disjointed and chaotic pace, and students feel they wasted valuable study time.",0,1
+"The university tuition fee requires excessive repetitive paperwork for simple certificate requests, which ruins the non-academic student experience.",0,3
+"The computer lab is old, defective, and lacks sufficient power outlets, creating an uncomfortable and frustrating classroom environment.",0,2
+"The student cafeteria serves overpriced food with questionable cleanliness and tiny portions, causing immense annoyance and wasted time for students.",0,3
+"The professor is always supportive, approachable, and responsive outside class, creating an enjoyable and stimulating classroom atmosphere.",2,0
+"The study module contains acceptable course assignments and standard exam formats, similar to other courses in the same department.",1,1
+"The air conditioning system lacks clean and properly maintained working spaces, creating an uncomfortable and frustrating classroom environment.",0,2
+"The classroom facilities provide sufficient air cooling under normal weather conditions, meeting basic requirements for regular class meetings.",1,2
+"The degree curriculum is exceptionally well-designed with cutting-edge industry technologies, which significantly boosted our practical software development skills.",2,1
+"The course registration portal keeps increasing every year while service quality deteriorates, leaving students frustrated with university management.",0,3
+"The computer lab workstations offer usable hardware suitable for running basic office tools, sufficient to conduct the lectures without major disruption.",1,2
+"The laboratory program prepares students thoroughly for internships and professional careers, which significantly boosted our practical software development skills.",2,1
+"The administrative student affairs office lacks transparency regarding scholarship allocations and exam schedules, and urgent complaints are consistently ignored.",0,3
+"The modern computer laboratory features modern hardware that handles demanding software effortlessly, providing a first-class learning experience.",2,2
+"The professor shares practical industry experience that enriches every lesson, earning highest praise from everyone in class.",2,0
+"The curriculum contains acceptable course assignments and standard exam formats, which is satisfactory for general degree requirements.",1,1
+"The campus Wi-Fi network is old, defective, and lacks sufficient power outlets, making physical attendance unpleasant and exhausting.",0,2
+"The degree module is heavily outdated and lacks modern industry practices, and students feel they wasted valuable study time.",0,1
+"The campus Wi-Fi network suffers from broken chairs, squeaky tables, and dim lighting, which wastes valuable lecture and laboratory time.",0,2
+"The teaching assistant shares practical industry experience that enriches every lesson, which helped me improve my academic performance significantly.",2,0
+"The course curriculum is exceptionally well-designed with cutting-edge industry technologies, giving students a strong competitive advantage in the job market.",2,1
+"The study module features practical case studies that reinforce problem-solving ability, giving students a strong competitive advantage in the job market.",2,1
+"The campus administration staff has a fast, intuitive online portal for seamless tuition payment and scheduling, setting a wonderful benchmark for student services.",2,3
+"The modern computer laboratory is equipped with brand-new ergonomic chairs and spacious power-equipped desks, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The campus parking facilities manages campus club activities according to general policies, in line with general university operational standards.",1,3
+"The student cafeteria requires excessive repetitive paperwork for simple certificate requests, imposing unreasonable financial and administrative burdens.",0,3
+"The instructor explains concepts in a confusing and monotonous manner, leaving us unprepared for the final exams.",0,0
+"The campus security and paperwork department has extremely rude staff and inefficient bureaucratic delays, imposing unreasonable financial and administrative burdens.",0,3
+"The high-speed campus Wi-Fi provides blazing-fast, stable internet connectivity across the entire building, providing a first-class learning experience.",2,2
+"The campus dining hall has a fast, intuitive online portal for seamless tuition payment and scheduling, making campus life welcoming, vibrant, and enjoyable.",2,3
+"The lecturer conducts classes on schedule with normal student interaction, neither particularly inspiring nor bad.",1,0
+"The visiting professor demonstrates deep mastery and inspires students to study further, creating an enjoyable and stimulating classroom atmosphere.",2,0
+"The digital library maintains a cool, quiet, and spotless study environment, providing a first-class learning experience.",2,2
+"The study module covers standard topics expected in an undergraduate program, similar to other courses in the same department.",1,1
+"The campus Wi-Fi network suffers from broken chairs, squeaky tables, and dim lighting, making physical attendance unpleasant and exhausting.",0,2
+"The university tuition fee keeps increasing every year while service quality deteriorates, imposing unreasonable financial and administrative burdens.",0,3
+"The academic syllabus is heavily outdated and lacks modern industry practices, leaving students unprepared for real-world job requirements.",0,1
+"The air conditioning and audio system provides blazing-fast, stable internet connectivity across the entire building, providing a first-class learning experience.",2,2
+"The course roadmap is heavily outdated and lacks modern industry practices, and students feel they wasted valuable study time.",0,1
+"The course roadmap focuses far too much on abstract theory with zero practical application, which causes unnecessary burnout and stress.",0,1
+"The training program is poorly structured with redundant overlapping chapters, and students feel they wasted valuable study time.",0,1
+"The campus cafeteria service handles course registration with ordinary queue delays, meeting standard procedural requirements.",1,3
+"The campus dining hall has a fast, intuitive online portal for seamless tuition payment and scheduling, and students feel genuinely cared for and supported.",2,3
+"The campus cafeteria service offers standard food options at typical local student prices, meeting standard procedural requirements.",1,3
+"The university tuition payment schedule has moderate parking fees with standard security checks, which is normal for a large educational institution.",1,3
+"The laboratory program combines rigorous theoretical foundations with practical hands-on projects, which significantly boosted our practical software development skills.",2,1
+"The campus parking facilities manages campus club activities according to general policies, meeting standard procedural requirements.",1,3
+"The campus parking facilities offers standard food options at typical local student prices, and student life proceeds as expected.",1,3
+"The instructor makes difficult topics easy to grasp with vivid real-life examples, and students truly appreciate their dedication.",2,0
+"The lecture room equipment function at a basic level with acceptable internet speed, without any major advantages or intolerable flaws.",1,2
+"The classroom projector fails to cool the room during hot afternoons making it suffocating, severely disrupting our ability to concentrate on learning.",0,2
+"The modern computer laboratory provides blazing-fast, stable internet connectivity across the entire building, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The multimedia sound system lacks clean and properly maintained working spaces, which wastes valuable lecture and laboratory time.",0,2
+"The student cafeteria keeps increasing every year while service quality deteriorates, imposing unreasonable financial and administrative burdens.",0,3
+"The air conditioning and audio system maintains a cool, quiet, and spotless study environment, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The study areas function at a basic level with acceptable internet speed, comparable to standard public university classrooms.",1,2
+"The campus Wi-Fi provide sufficient air cooling under normal weather conditions, meeting basic requirements for regular class meetings.",1,2
+"The study areas offer usable hardware suitable for running basic office tools, comparable to standard public university classrooms.",1,2
+"The administrative affairs department follows established university administrative regulations, meeting standard procedural requirements.",1,3
+"The laboratory equipment lacks clean and properly maintained working spaces, which wastes valuable lecture and laboratory time.",0,2
+"The campus Wi-Fi have standard desks, lighting, and conventional whiteboards, which is acceptable for everyday student needs.",1,2
+"The new lecture hall provides blazing-fast, stable internet connectivity across the entire building, which greatly enhances the overall quality of campus life.",2,2
+"The course curriculum progresses at a disjointed and chaotic pace, making the subject feel boring and irrelevant.",0,1
+"The degree curriculum features practical case studies that reinforce problem-solving ability, and students feel deeply confident in their technical knowledge.",2,1
+"The modern computer laboratory maintains a cool, quiet, and spotless study environment, and students are very pleased with the university investment.",2,2
+"The degree curriculum is structured logically with clear learning milestones and objectives, making the course highly practical, relevant, and inspiring.",2,1
+"The lecturer follows the lecture slides strictly with moderate pacing, and the overall experience is ordinary.",1,0
+"The degree curriculum combines rigorous theoretical foundations with practical hands-on projects, and students feel deeply confident in their technical knowledge.",2,1
+"The financial aid and scholarship office organizes vibrant clubs and exciting community activities, which greatly assists students throughout their university journey.",2,3
+"The administrative affairs department has moderate parking fees with standard security checks, without notable problems or extraordinary service.",1,3
+"The student cafeteria has extremely rude staff and inefficient bureaucratic delays, imposing unreasonable financial and administrative burdens.",0,3
+"The semester course plan presents standard foundational knowledge at an average pace, meeting standard university guidelines.",1,1
+"The study areas function at a basic level with acceptable internet speed, without any major advantages or intolerable flaws.",1,2
+"The modern computer laboratory features modern hardware that handles demanding software effortlessly, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The course syllabus presents standard foundational knowledge at an average pace, meeting standard university guidelines.",1,1
+"The student support center maintains an efficient, spacious parking system with attentive staff, building a strong sense of community and pride.",2,3
+"The campus dining hall is remarkably polite, helpful, and resolves student requests in minutes, building a strong sense of community and pride.",2,3
+"Our teacher provides standard feedback on assignments, and the overall experience is ordinary.",1,0
+"The campus Wi-Fi have standard desks, lighting, and conventional whiteboards, meeting basic requirements for regular class meetings.",1,2
+"The visiting professor gives ambiguous exam requirements that lead to poor scores, which causes intense frustration among students.",0,0
+"The multimedia sound system is constantly broken and repairs take weeks to complete, which wastes valuable lecture and laboratory time.",0,2
+"The professor follows the lecture slides strictly with moderate pacing, without outstanding strengths or major defects.",1,0
+"The laboratory syllabus progresses at a disjointed and chaotic pace, leaving students unprepared for real-world job requirements.",0,1
+"The course registration portal lacks transparency regarding scholarship allocations and exam schedules, leaving students frustrated with university management.",0,3
+"The lab tutor arrives late to class and dismisses questions abruptly, leaving us unprepared for the final exams.",0,0
+"The laboratory syllabus progresses at a disjointed and chaotic pace, which causes unnecessary burnout and stress.",0,1
+"The training program offers an engaging progression from basic concepts to advanced skills, making the course highly practical, relevant, and inspiring.",2,1
+"The digital library is state-of-the-art with high-performance workstations and crisp 4K projectors, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The university tuition fee is dangerously overcrowded with severe vehicle congestion and scratches, which ruins the non-academic student experience.",0,3
+"The student cafeteria has extremely rude staff and inefficient bureaucratic delays, which ruins the non-academic student experience.",0,3
+"The student cafeteria has extremely rude staff and inefficient bureaucratic delays, and urgent complaints are consistently ignored.",0,3
+"The laboratory program prepares students thoroughly for internships and professional careers, making the course highly practical, relevant, and inspiring.",2,1
+"The instructor is always supportive, approachable, and responsive outside class, which helped me improve my academic performance significantly.",2,0
+"The semester course plan has a normal workload that can be managed with consistent effort, providing an ordinary educational foundation.",1,1
+"The professor explains core definitions without many extra examples, which is adequate for passing the course.",1,0
+"The faculty member answers questions adequately when prompted, without outstanding strengths or major defects.",1,0
+"The study module follows a conventional structure similar to standard textbooks, providing an ordinary educational foundation.",1,1
+"The laboratory syllabus is poorly structured with redundant overlapping chapters, which causes unnecessary burnout and stress.",0,1
+"The faculty member provides standard feedback on assignments, and the overall experience is ordinary.",1,0
+"The lecturer follows the lecture slides strictly with moderate pacing, without outstanding strengths or major defects.",1,0
+"The instructor explains complex algorithms with incredible clarity and patience, and students truly appreciate their dedication.",2,0
+"The teaching assistant ignores student questions during class discussions, making the course stressful and unhelpful.",0,0
+"The campus parking facilities processes document requests within standard turnaround times, and student life proceeds as expected.",1,3
+"The faculty member delivers standard lectures according to the textbook, without outstanding strengths or major defects.",1,0
+"The instructor covers the required syllabus materials in an ordinary manner, neither particularly inspiring nor bad.",1,0
+"The training program progresses at a disjointed and chaotic pace, and students feel they wasted valuable study time.",0,1
+"The instructor arrives late to class and dismisses questions abruptly, making it very difficult to follow the lectures.",0,0
+"The laboratory program is exceptionally well-designed with cutting-edge industry technologies, which significantly boosted our practical software development skills.",2,1
+"Our course teacher ignores student questions during class discussions, leaving us unprepared for the final exams.",0,0
+"The teaching assistant grades exams very harshly without constructive feedback, so the entire class struggled to understand the topic.",0,0
+"The professor has an average teaching style typical of university lecturers, comparable to most other instructors.",1,0
+"The campus parking lot serves overpriced food with questionable cleanliness and tiny portions, imposing unreasonable financial and administrative burdens.",0,3
+"The course coordinator explains core definitions without many extra examples, comparable to most other instructors.",1,0
+"The lecturer demonstrates deep mastery and inspires students to study further, making this one of the most rewarding courses of the semester.",2,0
+"The campus cafeteria service manages campus club activities according to general policies, meeting standard procedural requirements.",1,3
+"The campus administration staff has a fast, intuitive online portal for seamless tuition payment and scheduling, making campus life welcoming, vibrant, and enjoyable.",2,3
+"The student service center offers standard food options at typical local student prices, which is normal for a large educational institution.",1,3
+"The computer lab workstations provide sufficient air cooling under normal weather conditions, meeting basic requirements for regular class meetings.",1,2
+"The campus parking lot has extremely rude staff and inefficient bureaucratic delays, which ruins the non-academic student experience.",0,3
+"The curriculum presents standard foundational knowledge at an average pace, meeting standard university guidelines.",1,1
+"The lecturer explains concepts in a confusing and monotonous manner, which ruins the whole learning experience.",0,0
+"The campus Wi-Fi are average and adequate for daily academic tasks, comparable to standard public university classrooms.",1,2
+"The laboratory equipment suffers from broken chairs, squeaky tables, and dim lighting, making physical attendance unpleasant and exhausting.",0,2
+"The university tuition payment schedule processes document requests within standard turnaround times, in line with general university operational standards.",1,3
+"The study areas have standard desks, lighting, and conventional whiteboards, without any major advantages or intolerable flaws.",1,2
+"The computer lab workstations function at a basic level with acceptable internet speed, without any major advantages or intolerable flaws.",1,2
+"The campus parking facilities has moderate parking fees with standard security checks, in line with general university operational standards.",1,3
+"The lecture room equipment provide sufficient air cooling under normal weather conditions, comparable to standard public university classrooms.",1,2
+"The faculty mentor makes difficult topics easy to grasp with vivid real-life examples, which helped me improve my academic performance significantly.",2,0
+"The university student portal follows established university administrative regulations, which is normal for a large educational institution.",1,3
+"The financial aid and scholarship office maintains an efficient, spacious parking system with attentive staff, building a strong sense of community and pride.",2,3
+"The modern computer laboratory offers excellent multimedia tools that enhance presentation clarity, making hands-on laboratory sessions enjoyable and productive.",2,2
+"The instructor demonstrates deep mastery and inspires students to study further, earning highest praise from everyone in class.",2,0
+"The student service center processes document requests within standard turnaround times, in line with general university operational standards.",1,3
+"The academic syllabus has an overwhelming workload with repetitive busywork, leaving students unprepared for real-world job requirements.",0,1
+"The university extracurricular clubs is remarkably polite, helpful, and resolves student requests in minutes, building a strong sense of community and pride.",2,3
+"The campus library facilities are average and adequate for daily academic tasks, comparable to standard public university classrooms.",1,2
+"The instructor provides standard feedback on assignments, neither particularly inspiring nor bad.",1,0
+"The degree curriculum features practical case studies that reinforce problem-solving ability, giving students a strong competitive advantage in the job market.",2,1
+"The campus security and paperwork department constantly crashes and freezes during peak course enrollment hours, leaving students frustrated with university management.",0,3
+"The degree module lacks alignment between theoretical lectures and lab sessions, leaving students unprepared for real-world job requirements.",0,1
+"The student support center is remarkably polite, helpful, and resolves student requests in minutes, building a strong sense of community and pride.",2,3
+"The campus library facilities offer usable hardware suitable for running basic office tools, meeting basic requirements for regular class meetings.",1,2
+"The lecture hall furniture has sluggish internet speeds that frequently disconnect during exams, creating an uncomfortable and frustrating classroom environment.",0,2
+"The laboratory program prepares students thoroughly for internships and professional careers, giving students a strong competitive advantage in the job market.",2,1
+"The course registration portal serves overpriced food with questionable cleanliness and tiny portions, causing immense annoyance and wasted time for students.",0,3
+"The course curriculum prepares students thoroughly for internships and professional careers, giving students a strong competitive advantage in the job market.",2,1
+"The financial aid and scholarship office maintains an efficient, spacious parking system with attentive staff, and students feel genuinely cared for and supported.",2,3
+"The visiting professor explains complex algorithms with incredible clarity and patience, and I learned an immense amount from their guidance.",2,0
+"The campus cafeteria service manages campus club activities according to general policies, and student life proceeds as expected.",1,3
+"The multimedia sound system is constantly broken and repairs take weeks to complete, making physical attendance unpleasant and exhausting.",0,2
+"The campus dining hall has a fast, intuitive online portal for seamless tuition payment and scheduling, setting a wonderful benchmark for student services.",2,3
+"The visiting professor gives ambiguous exam requirements that lead to poor scores, which ruins the whole learning experience.",0,0
+"The semester course plan has a normal workload that can be managed with consistent effort, which is satisfactory for general degree requirements.",1,1
+"The course syllabus has a normal workload that can be managed with consistent effort, which is satisfactory for general degree requirements.",1,1
+"The faculty member explains core definitions without many extra examples, which is adequate for passing the course.",1,0
+"The university learning facilities features modern hardware that handles demanding software effortlessly, providing a first-class learning experience.",2,2
+"The academic tutor delivers standard lectures according to the textbook, comparable to most other instructors.",1,0
+"The curriculum covers standard topics expected in an undergraduate program, providing an ordinary educational foundation.",1,1
+"The lecturer answers questions adequately when prompted, meeting general academic expectations.",1,0
+"The training program is too superficial and skips fundamental principles, which causes unnecessary burnout and stress.",0,1
+"The student support center offers delicious, clean, and nutritious meals at very affordable student prices, which greatly assists students throughout their university journey.",2,3
+"The campus administration staff organizes vibrant clubs and exciting community activities, setting a wonderful benchmark for student services.",2,3
+"The curriculum covers standard topics expected in an undergraduate program, which is satisfactory for general degree requirements.",1,1
+"The adjunct lecturer rarely responds to student emails or consultation requests, making the course stressful and unhelpful.",0,0
+"The training program combines rigorous theoretical foundations with practical hands-on projects, and the content is both intellectually stimulating and useful.",2,1
