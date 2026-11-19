@@ -522,7 +522,7 @@ class TestStreamlitAppSmokeAndInteractions(unittest.TestCase):
 
         self.assertEqual(len(at.progress), 14)
         all_markdown = " ".join([m.value for m in at.markdown])
-        self.assertIn("#0B1120", all_markdown)
+        self.assertIn("#070708", all_markdown)
         self.assertIn("Text Classification of Vietnamese Student Feedback", all_markdown)
         self.assertIn("Probability Breakdown (Donut)", all_markdown)
         self.assertIn("vsfc-donut-ring", all_markdown)

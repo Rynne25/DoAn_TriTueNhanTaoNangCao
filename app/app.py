@@ -73,119 +73,115 @@ MODEL_CARD_TITLES: Dict[str, str] = {
 }
 
 MODEL_RING_COLORS: Dict[str, str] = {
-    "baseline": "#10B981",
-    "phobert": "#4F46E5",
-    "both": "#6366F1",
+    "baseline": "#0F7D45",
+    "phobert": "#1A4BE0",
+    "both": "#0F0F0E",
 }
 
 THEME_PALETTES: Dict[str, Dict[str, str]] = {
     "light": {
-        "app_bg": "#FAFBFD",
-        "app_gradient": (
-            "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.08), transparent 70%), "
-            "radial-gradient(ellipse 60% 40% at 100% 100%, rgba(6, 182, 212, 0.06), transparent 70%), "
-            "#FAFBFD"
-        ),
-        "header_bg": "rgba(250, 251, 253, 0.75)",
-        "sidebar_bg": "rgba(244, 246, 251, 0.82)",
-        "sidebar_border": "rgba(226, 232, 240, 0.80)",
-        "sidebar_hover": "rgba(238, 242, 246, 0.90)",
-        "sidebar_active_bg": "rgba(231, 234, 252, 0.90)",
-        "sidebar_active_text": "#312E81",
-        "card_bg": "rgba(255, 255, 255, 0.78)",
-        "subcard_bg": "rgba(248, 250, 252, 0.72)",
-        "card_border": "rgba(255, 255, 255, 0.70)",
-        "subcard_border": "rgba(226, 232, 240, 0.75)",
-        "card_border_glow": "rgba(99, 102, 241, 0.35)",
-        "card_shadow": "0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03)",
-        "card_hover_shadow": "0 20px 40px -4px rgba(99, 102, 241, 0.12), 0 8px 16px -2px rgba(15, 23, 42, 0.04)",
-        "subcard_shadow": "0 2px 8px rgba(15, 23, 42, 0.03)",
-        "glass_specular": "rgba(255, 255, 255, 0.95)",
-        "input_bg": "rgba(255, 255, 255, 0.85)",
-        "input_border": "rgba(226, 232, 240, 0.90)",
-        "input_focus_bg": "rgba(255, 255, 255, 0.98)",
-        "input_focus_ring": "rgba(79, 70, 229, 0.20)",
-        "input_focus_glow": "rgba(79, 70, 229, 0.12)",
-        "text_primary": "#0F172A",
-        "text_body": "#1E293B",
-        "text_muted": "#64748B",
-        "text_subtle": "#475569",
-        "divider": "rgba(226, 232, 240, 0.75)",
-        "row_divider": "rgba(241, 245, 249, 0.85)",
-        "pill_bg": "rgba(244, 246, 251, 0.80)",
-        "pill_border": "rgba(226, 232, 240, 0.85)",
-        "track_bg": "rgba(238, 242, 247, 0.80)",
-        "secondary_btn_bg": "rgba(255, 255, 255, 0.85)",
-        "secondary_btn_border": "rgba(226, 232, 240, 0.85)",
-        "secondary_btn_text": "#334155",
-        "secondary_btn_hover": "rgba(248, 250, 252, 0.95)",
-        "brand_text": "#312E81",
-        "primary": "#4F46E5",
-        "primary_gradient_end": "#6366F1",
-        "primary_hover": "#4338CA",
-        "btn_glow": "rgba(79, 70, 229, 0.28)",
-        "btn_glow_hover": "rgba(79, 70, 229, 0.42)",
-        "winner_pct": "#312E81",
-        "alert_bg": "rgba(255, 255, 255, 0.82)",
-        "seg_track": "rgba(233, 237, 247, 0.80)",
-        "seg_active_bg": "rgba(255, 255, 255, 0.95)",
-        "seg_active_text": "#312E81",
-        "seg_active_shadow": "0 2px 8px rgba(15, 23, 42, 0.10), 0 1px 2px rgba(15, 23, 42, 0.05)",
-        "theme_icon_active": "#D97706",
+        "app_bg": "#F3F3F1",
+        "app_gradient": "none",
+        "header_bg": "rgba(255, 255, 255, 0.92)",
+        "sidebar_bg": "#FFFFFF",
+        "sidebar_border": "rgba(15, 15, 14, 0.08)",
+        "sidebar_hover": "#F6F5F2",
+        "sidebar_active_bg": "rgba(26, 75, 224, 0.08)",
+        "sidebar_active_text": "#1A4BE0",
+        "card_bg": "#FFFFFF",
+        "subcard_bg": "#F6F5F2",
+        "card_border": "rgba(15, 15, 14, 0.08)",
+        "subcard_border": "rgba(15, 15, 14, 0.07)",
+        "card_border_glow": "rgba(15, 15, 14, 0.18)",
+        "card_shadow": "0 1px 2px rgba(15, 15, 14, 0.04), 0 8px 24px -10px rgba(15, 15, 14, 0.06)",
+        "card_hover_shadow": "0 2px 6px rgba(15, 15, 14, 0.06), 0 14px 32px -12px rgba(15, 15, 14, 0.09)",
+        "subcard_shadow": "none",
+        "glass_specular": "rgba(255, 255, 255, 0.90)",
+        "input_bg": "#F6F5F2",
+        "input_border": "rgba(15, 15, 14, 0.14)",
+        "input_focus_bg": "#FFFFFF",
+        "input_focus_ring": "rgba(26, 75, 224, 0.18)",
+        "input_focus_glow": "rgba(26, 75, 224, 0.10)",
+        "text_primary": "#0F0F0E",
+        "text_body": "#262624",
+        "text_muted": "#686863",
+        "text_subtle": "#4A4A46",
+        "divider": "rgba(15, 15, 14, 0.08)",
+        "row_divider": "rgba(15, 15, 14, 0.06)",
+        "pill_bg": "#ECEBE6",
+        "pill_border": "rgba(15, 15, 14, 0.08)",
+        "track_bg": "#E7E6E1",
+        "secondary_btn_bg": "#FFFFFF",
+        "secondary_btn_border": "rgba(15, 15, 14, 0.16)",
+        "secondary_btn_text": "#0F0F0E",
+        "secondary_btn_hover": "#F6F5F2",
+        "brand_text": "#0F0F0E",
+        "brand_mark_bg": "#0F0F0E",
+        "brand_mark_fg": "#FFFFFF",
+        "primary": "#1A4BE0",
+        "primary_gradient_end": "#1A4BE0",
+        "primary_hover": "#143BB5",
+        "btn_glow": "rgba(26, 75, 224, 0.18)",
+        "btn_glow_hover": "rgba(26, 75, 224, 0.28)",
+        "winner_pct": "#0F0F0E",
+        "alert_bg": "#FFFFFF",
+        "seg_track": "#ECEBE6",
+        "seg_active_bg": "#FFFFFF",
+        "seg_active_text": "#0F0F0E",
+        "seg_active_shadow": "0 1px 3px rgba(15, 15, 14, 0.10)",
+        "theme_icon_active": "#0F0F0E",
     },
     "dark": {
-        "app_bg": "#0B1120",
-        "app_gradient": (
-            "radial-gradient(ellipse 70% 45% at 20% -10%, rgba(99, 102, 241, 0.16), transparent 70%), "
-            "radial-gradient(ellipse 60% 40% at 85% 105%, rgba(6, 182, 212, 0.14), transparent 70%), "
-            "#0B1120"
-        ),
-        "header_bg": "rgba(11, 17, 32, 0.78)",
-        "sidebar_bg": "rgba(17, 24, 39, 0.85)",
-        "sidebar_border": "rgba(30, 41, 59, 0.85)",
-        "sidebar_hover": "rgba(30, 41, 59, 0.90)",
-        "sidebar_active_bg": "rgba(99, 102, 241, 0.22)",
-        "sidebar_active_text": "#E0E7FF",
-        "card_bg": "rgba(21, 30, 49, 0.72)",
-        "subcard_bg": "rgba(27, 38, 59, 0.65)",
-        "card_border": "rgba(255, 255, 255, 0.12)",
-        "subcard_border": "rgba(255, 255, 255, 0.08)",
-        "card_border_glow": "rgba(99, 102, 241, 0.50)",
-        "card_shadow": "0 16px 36px -4px rgba(0, 0, 0, 0.55), 0 4px 16px -2px rgba(0, 0, 0, 0.35)",
-        "card_hover_shadow": "0 24px 48px -4px rgba(0, 0, 0, 0.65), 0 0 24px rgba(99, 102, 241, 0.22)",
-        "subcard_shadow": "0 2px 10px rgba(0, 0, 0, 0.30)",
-        "glass_specular": "rgba(255, 255, 255, 0.16)",
-        "input_bg": "rgba(15, 23, 42, 0.75)",
-        "input_border": "rgba(51, 65, 85, 0.85)",
-        "input_focus_bg": "rgba(17, 24, 39, 0.92)",
-        "input_focus_ring": "rgba(99, 102, 241, 0.30)",
-        "input_focus_glow": "rgba(99, 102, 241, 0.25)",
-        "text_primary": "#F8FAFC",
-        "text_body": "#E2E8F0",
-        "text_muted": "#94A3B8",
-        "text_subtle": "#CBD5E1",
-        "divider": "rgba(36, 50, 75, 0.85)",
-        "row_divider": "rgba(36, 50, 75, 0.85)",
-        "pill_bg": "rgba(30, 41, 59, 0.80)",
-        "pill_border": "rgba(51, 65, 85, 0.85)",
-        "track_bg": "rgba(38, 52, 77, 0.75)",
-        "secondary_btn_bg": "rgba(30, 41, 59, 0.75)",
-        "secondary_btn_border": "rgba(51, 65, 85, 0.85)",
-        "secondary_btn_text": "#E2E8F0",
-        "secondary_btn_hover": "rgba(40, 53, 72, 0.90)",
-        "brand_text": "#E0E7FF",
-        "primary": "#6366F1",
-        "primary_gradient_end": "#4F46E5",
-        "primary_hover": "#818CF8",
-        "btn_glow": "rgba(99, 102, 241, 0.35)",
-        "btn_glow_hover": "rgba(99, 102, 241, 0.55)",
-        "winner_pct": "#C7D2FE",
-        "alert_bg": "rgba(21, 30, 49, 0.82)",
-        "seg_track": "rgba(26, 36, 56, 0.80)",
-        "seg_active_bg": "rgba(99, 102, 241, 0.95)",
-        "seg_active_text": "#FFFFFF",
-        "seg_active_shadow": "0 2px 12px rgba(99, 102, 241, 0.50), 0 1px 3px rgba(0, 0, 0, 0.4)",
-        "theme_icon_active": "#FFFFFF",
+        "app_bg": "#070708",
+        "app_gradient": "none",
+        "header_bg": "rgba(16, 16, 18, 0.92)",
+        "sidebar_bg": "#101012",
+        "sidebar_border": "rgba(242, 242, 239, 0.08)",
+        "sidebar_hover": "#1B1B1E",
+        "sidebar_active_bg": "rgba(59, 110, 245, 0.16)",
+        "sidebar_active_text": "#F2F2EF",
+        "card_bg": "#151517",
+        "subcard_bg": "#1C1C1F",
+        "card_border": "rgba(242, 242, 239, 0.09)",
+        "subcard_border": "rgba(242, 242, 239, 0.07)",
+        "card_border_glow": "rgba(242, 242, 239, 0.20)",
+        "card_shadow": "0 1px 2px rgba(0, 0, 0, 0.50), 0 12px 28px -10px rgba(0, 0, 0, 0.60)",
+        "card_hover_shadow": "0 2px 8px rgba(0, 0, 0, 0.60), 0 18px 36px -12px rgba(0, 0, 0, 0.70)",
+        "subcard_shadow": "none",
+        "glass_specular": "rgba(255, 255, 255, 0.06)",
+        "input_bg": "#1B1B1E",
+        "input_border": "rgba(242, 242, 239, 0.14)",
+        "input_focus_bg": "#141416",
+        "input_focus_ring": "rgba(59, 110, 245, 0.30)",
+        "input_focus_glow": "rgba(59, 110, 245, 0.18)",
+        "text_primary": "#F2F2EF",
+        "text_body": "#D6D6D1",
+        "text_muted": "#8F9094",
+        "text_subtle": "#B0B0B4",
+        "divider": "rgba(242, 242, 239, 0.08)",
+        "row_divider": "rgba(242, 242, 239, 0.07)",
+        "pill_bg": "#202024",
+        "pill_border": "rgba(242, 242, 239, 0.10)",
+        "track_bg": "#26262B",
+        "secondary_btn_bg": "#1B1B1E",
+        "secondary_btn_border": "rgba(242, 242, 239, 0.14)",
+        "secondary_btn_text": "#F2F2EF",
+        "secondary_btn_hover": "#242428",
+        "brand_text": "#F2F2EF",
+        "brand_mark_bg": "#F2F2EF",
+        "brand_mark_fg": "#070708",
+        "primary": "#3B6EF5",
+        "primary_gradient_end": "#3B6EF5",
+        "primary_hover": "#5683F7",
+        "btn_glow": "rgba(59, 110, 245, 0.24)",
+        "btn_glow_hover": "rgba(59, 110, 245, 0.36)",
+        "winner_pct": "#F2F2EF",
+        "alert_bg": "#151517",
+        "seg_track": "#1C1C1F",
+        "seg_active_bg": "#2B2B30",
+        "seg_active_text": "#F2F2EF",
+        "seg_active_shadow": "0 1px 3px rgba(0, 0, 0, 0.45)",
+        "theme_icon_active": "#F2F2EF",
     },
 }
 
@@ -901,7 +897,7 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     )
     css = f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
     @keyframes glassReveal {{
         from {{
@@ -952,40 +948,77 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         background-attachment: fixed !important;
         background-size: cover !important;
         color: {p['text_body']};
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Geist', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.28s ease;
     }}
 
     .stApp p, .stApp label, .stApp li, .stApp h1, .stApp h2, .stApp h3, .stApp h4,
     .stApp textarea, .stApp input, .stApp button, [data-testid="stMarkdownContainer"] {{
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Geist', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         color: {p['text_body']};
         transition: color 0.24s ease;
+    }}
+
+    .stApp code, .stApp kbd, .stApp samp, [data-testid="stCodeBlock"] {{
+        font-family: 'Geist Mono', ui-monospace, monospace !important;
     }}
 
     [data-testid="stDecoration"] {{
         display: none;
     }}
 
-    /* Frosted Glass Top Navigation Header */
-    header[data-testid="stHeader"] {{
-        background: {p['header_bg']} !important;
-        backdrop-filter: blur(14px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
-        border-bottom: 1px solid {p['card_border']} !important;
-        transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Hide default Streamlit header/deploy toolbar so the UI is a pure web app */
+    header[data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    [data-testid="stStatusWidget"],
+    [data-testid="stAppDeployButton"],
+    #MainMenu {{
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        min-height: 0 !important;
     }}
 
-    header[data-testid="stHeader"] button,
-    header[data-testid="stHeader"] svg {{
-        color: {p['text_muted']} !important;
-        fill: currentColor;
+    /* Natural full-page scrolling — keep html as the sole scrollport so view() scroll timelines work */
+    html {{
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: clip !important;
+        background-color: {p['app_bg']} !important;
     }}
 
-    .main .block-container {{
-        max-width: 1220px;
-        padding-top: 2rem;
-        padding-bottom: 3rem;
+    body {{
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+        background-color: {p['app_bg']} !important;
+    }}
+
+    .stApp,
+    [data-testid="stAppViewContainer"] {{
+        position: relative !important;
+        inset: auto !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+        overflow-x: clip !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
+
+    /* Unlock intermediate Streamlit wrapper around stMain (fixes 100vh height lock & clipped bottom) */
+    [data-testid="stAppViewContainer"] > div:has(> [data-testid="stMain"]),
+    [data-testid="stAppViewContainer"] > div:has([data-testid="stMain"]) {{
+        position: relative !important;
+        inset: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        flex: 1 0 auto !important;
+        width: 100% !important;
     }}
 
     .stApp code {{
@@ -993,27 +1026,271 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         color: {p['text_primary']} !important;
         border: 1px solid {p['pill_border']};
         border-radius: 6px;
-        padding: 2px 7px;
-        box-shadow: inset 0 1px 0 0 {p['glass_specular']};
-        transition: background-color 0.28s ease, border-color 0.28s ease, color 0.24s ease;
+        padding: 1px 6px;
+        font-size: 0.75rem;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }}
 
     [data-testid="stCaptionContainer"] p {{
         color: {p['text_muted']} !important;
     }}
 
-    /* Frosted Glass Sidebar Rail */
-    section[data-testid="stSidebar"] {{
+    /* =========================================================================
+       TASTE SKILL TOP CONTROL DECK (Slim Horizontal Header, Zero Wasted Space)
+       ========================================================================= */
+
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="collapsedControl"],
+    section[data-testid="stSidebar"] button[kind="header"],
+    section[data-testid="stSidebar"] [data-testid="stSidebarHeader"],
+    section[data-testid="stSidebar"] > div:first-child > button {{
+        display: none !important;
+        visibility: hidden !important;
+    }}
+
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"][aria-expanded="false"],
+    section[data-testid="stSidebar"][aria-expanded="true"] {{
+        position: relative !important;
+        display: block !important;
+        visibility: visible !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        flex: 0 0 auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        border-right: none !important;
+        border-bottom: 1px solid {p['sidebar_border']} !important;
         background-color: {p['sidebar_bg']} !important;
-        backdrop-filter: blur(16px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-        border-right: 1px solid {p['sidebar_border']} !important;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05) !important;
-        transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        box-shadow: 0 1px 2px rgba(15, 15, 14, 0.04) !important;
+        z-index: 50 !important;
+        overflow: visible !important;
+        transition: background-color 0.25s ease, border-color 0.25s ease !important;
+    }}
+
+    section[data-testid="stSidebar"] > div,
+    section[data-testid="stSidebar"] [data-testid="stSidebarContent"],
+    section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {{
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }}
+
+    /* Remove Streamlit's default 96px bottom padding on stSidebarUserContent */
+    section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {{
+        padding: 0 !important;
+        margin: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {{
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 0.65rem 1.5rem 0.95rem 1.5rem !important;
     }}
 
     section[data-testid="stSidebar"] .block-container {{
-        padding-top: 1.25rem;
+        max-width: 1200px !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+    }}
+
+    /* Tighten vertical rhythm inside Top Deck */
+    section[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {{
+        gap: 0.42rem !important;
+    }}
+
+    /* Pixel-perfect label alignment across Radio and both Selectboxes (keep collapsed labels hidden) */
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-testid="stWidgetLabel"],
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] label[data-testid="stWidgetLabel"] {{
+        display: flex !important;
+        align-items: center !important;
+        height: 20px !important;
+        min-height: 20px !important;
+        max-height: 20px !important;
+        margin: 0 0 6px 0 !important;
+        padding: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] p,
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] label[data-testid="stWidgetLabel"] p {{
+        font-size: 0.74rem !important;
+        font-weight: 600 !important;
+        line-height: 20px !important;
+        color: {p['text_muted']} !important;
+        -webkit-text-fill-color: {p['text_muted']} !important;
+        margin: 0 !important;
+    }}
+
+    /* Unified 38px control height across Radio pills, Selectboxes, and Buttons */
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] [data-baseweb="select"],
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] [data-baseweb="select"] > div,
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] .react-aria-ComboBox > div,
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] div[role="group"] {{
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        box-sizing: border-box !important;
+        border-radius: 9px !important;
+        font-size: 0.81rem !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stSelectbox"] [data-baseweb="select"] > div > div {{
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }}
+
+    section[data-testid="stSidebar"] .stButton {{
+        margin: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] .stButton button,
+    section[data-testid="stSidebar"] .stButton button[kind="secondary"] {{
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        box-sizing: border-box !important;
+        padding: 0 0.7rem !important;
+        border-radius: 9px !important;
+        font-size: 0.79rem !important;
+        line-height: 1 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+    }}
+
+    /* Compact horizontal radio pills matching exact 38px height */
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] {{
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0.28rem !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label {{
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        box-sizing: border-box !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 0 0.65rem !important;
+        margin: 0 !important;
+        border-left: none !important;
+        border: 1px solid {p['input_border']} !important;
+        border-radius: 9px !important;
+        white-space: nowrap !important;
+        background: {p['input_bg']} !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label p {{
+        font-size: 0.79rem !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {{
+        background-color: {p['sidebar_active_bg']} !important;
+        border: 1px solid {p['primary']} !important;
+        border-left: 1px solid {p['primary']} !important;
+        transform: none !important;
+    }}
+
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
+        transform: none !important;
+    }}
+
+    /* Main Workspace Container — remove 96px top padding & fixed 100vh lock */
+    [data-testid="stSidebar"] + [data-testid="stMain"],
+    [data-testid="stSidebar"][aria-expanded="true"] + [data-testid="stMain"],
+    [data-testid="stSidebar"][aria-expanded="false"] + [data-testid="stMain"],
+    .main,
+    [data-testid="stMain"] {{
+        position: relative !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        flex: 1 0 auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        left: 0 !important;
+    }}
+
+    [data-testid="stMainBlockContainer"],
+    .main .block-container {{
+        max-width: 1200px !important;
+        width: 100% !important;
+        padding: 1.15rem 1.5rem 13.5rem 1.5rem !important;
+        margin: 0 auto !important;
+    }}
+
+    /* Tighten internal spacing inside result board cards so bars stay crisp and compact */
+    .st-key-board_card_baseline [data-testid="stVerticalBlock"],
+    .st-key-board_card_phobert [data-testid="stVerticalBlock"],
+    .st-key-board_card_single [data-testid="stVerticalBlock"],
+    .st-key-board_card_single_baseline [data-testid="stVerticalBlock"],
+    .st-key-board_card_single_phobert [data-testid="stVerticalBlock"] {{
+        gap: 0.24rem !important;
+    }}
+
+    .st-key-composer_card [data-testid="stVerticalBlock"] {{
+        gap: 0.55rem !important;
+    }}
+
+    /* Single-line System Status Strip inside Top Deck */
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"]:has(ul) {{
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.1rem !important;
+    }}
+
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"]:has(ul) p {{
+        margin: 0 !important;
+        font-size: 0.76rem !important;
+        color: {p['text_muted']} !important;
+    }}
+
+    section[data-testid="stSidebar"] ul {{
+        display: inline-flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.9rem !important;
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }}
+
+    section[data-testid="stSidebar"] ul li {{
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        font-size: 0.76rem !important;
+        margin: 0 !important;
+        color: {p['text_muted']} !important;
     }}
 
     section[data-testid="stSidebar"] [data-testid="stIconMaterial"],
@@ -1176,28 +1453,7 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         color: {p['seg_active_text']} !important;
     }}
 
-    /* Model mode sidebar radio navigation with smooth slide-hover & active accent */
-    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] {{
-        gap: 0.32rem;
-    }}
-
-    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label {{
-        background: transparent;
-        border-radius: 9px;
-        padding: 0.54rem 0.75rem;
-        margin: 0;
-        border-left: 3px solid transparent;
-        transition: background-color 0.24s ease,
-                    border-color 0.24s ease,
-                    box-shadow 0.24s ease,
-                    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    }}
-
-    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
-        background-color: {p['sidebar_hover']};
-        transform: translateX(3px);
-    }}
-
+    /* Radio circle ring styling inside Top Deck */
     section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:not(:has(input:checked)) > div:first-of-type,
     section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:not(:has(input:checked)) > div:first-of-type > div,
     section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:not(:has(input:checked)) > div:first-of-type > div > div {{
@@ -1208,16 +1464,9 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         border-color: {p['text_muted']} !important;
     }}
 
-    section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {{
-        background-color: {p['sidebar_active_bg']};
-        border-left: 3px solid {p['primary']};
-        box-shadow: {p['subcard_shadow']};
-        transform: translateX(2px);
-    }}
-
     section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) p {{
         color: {p['sidebar_active_text']} !important;
-        font-weight: 600;
+        font-weight: 600 !important;
     }}
 
     /* Selectbox & Virtual Dropdown */
@@ -1228,7 +1477,7 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     div[data-testid="stSelectbox"] div:has(> input[role="combobox"]) {{
         background-color: {p['input_bg']} !important;
         color: {p['text_primary']} !important;
-        transition: background-color 0.3s ease, border-color 0.24s ease, color 0.24s ease !important;
+        transition: background-color 0.24s ease, border-color 0.2s ease, color 0.2s ease !important;
     }}
 
     div[data-testid="stSelectbox"] [data-baseweb="select"] > div,
@@ -1246,8 +1495,8 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     }}
 
     div[data-testid="stSelectbox"] label[data-testid="stWidgetLabel"] p {{
-        color: {p['text_body']} !important;
-        -webkit-text-fill-color: {p['text_body']} !important;
+        color: {p['text_muted']} !important;
+        -webkit-text-fill-color: {p['text_muted']} !important;
     }}
 
     div[data-testid="stSelectboxVirtualDropdown"],
@@ -1296,7 +1545,7 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         color: {p['text_primary']} !important;
     }}
 
-    /* Elevated board cards + mode transition glide */
+    /* Taste Skill Feature Cards (ui/cards.css: flat crisp surface, 20px radius, hairline border) */
     .st-key-composer_card,
     .st-key-board_card_baseline,
     .st-key-board_card_phobert,
@@ -1304,27 +1553,26 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     .st-key-board_card_single_baseline,
     .st-key-board_card_single_phobert {{
         background-color: {p['card_bg']} !important;
-        backdrop-filter: blur(14px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
         border: 1px solid {p['card_border']} !important;
-        border-radius: 16px !important;
-        box-shadow: {p['card_shadow']}, inset 0 1px 1px 0 {p['glass_specular']} !important;
-        padding: 1.25rem 1.35rem !important;
-        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                    box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                    border-color 0.28s ease,
-                    background-color 0.35s ease !important;
+        border-radius: 20px !important;
+        box-shadow: inset 0 1px 0 {p['glass_specular']}, {p['card_shadow']} !important;
+        padding: 1.6rem 1.75rem !important;
+        overflow: clip !important;
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                    box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.22s ease,
+                    background-color 0.28s ease !important;
     }}
 
     .st-key-board_card_baseline,
     .st-key-board_card_single,
     .st-key-board_card_single_baseline,
     .st-key-board_card_single_phobert {{
-        animation: glassReveal 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: glassReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
     }}
 
     .st-key-board_card_phobert {{
-        animation: glassReveal 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.07s both;
+        animation: glassReveal 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
     }}
 
     .st-key-composer_card:hover,
@@ -1333,28 +1581,26 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     .st-key-board_card_single:hover,
     .st-key-board_card_single_baseline:hover,
     .st-key-board_card_single_phobert:hover {{
-        transform: translateY(-3px) scale(1.002);
+        transform: translateY(-2px);
         border-color: {p['card_border_glow']} !important;
-        box-shadow: {p['card_hover_shadow']}, inset 0 1px 1px 0 {p['glass_specular']} !important;
+        box-shadow: inset 0 1px 0 {p['glass_specular']}, {p['card_hover_shadow']} !important;
     }}
 
     .vsfc-mode-pill {{
-        animation: modeBadgeSlide 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
-        backdrop-filter: blur(12px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+        animation: modeBadgeSlide 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
         border: 1px solid {p['card_border']} !important;
-        box-shadow: {p['subcard_shadow']}, inset 0 1px 0 0 {p['glass_specular']} !important;
-        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease !important;
+        box-shadow: 0 1px 2px rgba(15, 15, 14, 0.04) !important;
+        transition: transform 0.18s ease, border-color 0.18s ease !important;
     }}
 
     .vsfc-mode-pill:hover {{
-        transform: translateY(-1px) scale(1.02);
-        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.20) !important;
+        transform: translateY(-1px);
+        border-color: {p['card_border_glow']} !important;
     }}
 
     .vsfc-conf-fill {{
         transform-origin: left center;
-        animation: barGrow 0.46s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: barGrow 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
     }}
 
     .vsfc-donut-grid {{
@@ -1365,22 +1611,21 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     }}
 
     .vsfc-donut-ring {{
-        animation: donutReveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: donutReveal 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
     }}
 
-    /* Text area */
+    /* Taste Skill Form Field (.field textarea) */
     .stTextArea textarea {{
         background-color: {p['input_bg']} !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
         border: 1px solid {p['input_border']} !important;
-        border-radius: 11px !important;
+        border-radius: 10px !important;
         color: {p['text_primary']} !important;
-        font-size: 0.95rem !important;
+        font-family: 'Geist', system-ui, -apple-system, sans-serif !important;
+        font-size: 15.5px !important;
         line-height: 1.55 !important;
         padding: 0.85rem 1rem !important;
-        box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.04) !important;
-        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: none !important;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease !important;
     }}
 
     .stTextArea textarea::placeholder {{
@@ -1390,19 +1635,23 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     .stTextArea textarea:focus {{
         border-color: {p['primary']} !important;
         background-color: {p['input_focus_bg']} !important;
-        box-shadow: 0 0 0 3px {p['input_focus_ring']}, 0 0 18px {p['input_focus_glow']} !important;
+        box-shadow: 0 0 0 3px {p['input_focus_ring']} !important;
+        outline: none !important;
     }}
 
-    /* Buttons */
+    /* Taste Skill Buttons (.btn--primary & .btn--secondary, 44px tap targets) */
     .stButton button[kind="primary"] {{
-        background: linear-gradient(135deg, {p['primary']} 0%, {p['primary_gradient_end']} 100%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.20) !important;
+        background: {p['primary']} !important;
+        border: 1px solid {p['primary']} !important;
         color: #FFFFFF !important;
-        border-radius: 9px !important;
+        border-radius: 10px !important;
+        min-height: 44px !important;
         font-weight: 600 !important;
-        padding: 0.52rem 1.15rem !important;
-        box-shadow: 0 4px 14px {p['btn_glow']}, inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
-        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        font-size: 14.5px !important;
+        letter-spacing: -0.01em !important;
+        padding: 0.55rem 1.25rem !important;
+        box-shadow: 0 1px 2px rgba(15, 15, 14, 0.08) !important;
+        transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease !important;
     }}
 
     .stButton button[kind="primary"] p {{
@@ -1410,27 +1659,38 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     }}
 
     .stButton button[kind="primary"]:hover {{
-        background: linear-gradient(135deg, {p['primary_hover']} 0%, {p['primary']} 100%) !important;
-        border-color: rgba(255, 255, 255, 0.40) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px {p['btn_glow_hover']}, inset 0 1px 1px rgba(255, 255, 255, 0.50) !important;
+        background: {p['primary_hover']} !important;
+        border-color: {p['primary_hover']} !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px {p['btn_glow']} !important;
     }}
 
     .stButton button[kind="primary"]:active {{
-        transform: translateY(0px) scale(0.97) !important;
-        box-shadow: 0 2px 8px {p['btn_glow']} !important;
+        transform: translateY(0px) scale(0.985) !important;
     }}
 
     .stButton button[kind="secondary"] {{
         background-color: {p['secondary_btn_bg']} !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
         border: 1px solid {p['secondary_btn_border']} !important;
         color: {p['secondary_btn_text']} !important;
-        border-radius: 9px !important;
+        border-radius: 10px !important;
         font-weight: 500 !important;
-        box-shadow: {p['subcard_shadow']} !important;
-        transition: all 0.20s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        font-size: 14px !important;
+        box-shadow: none !important;
+        transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
+    }}
+
+    [data-testid="stMain"] .stButton button[kind="secondary"] {{
+        min-height: 42px !important;
+    }}
+
+    section[data-testid="stSidebar"] .stButton button[kind="secondary"] {{
+        height: 38px !important;
+        min-height: 38px !important;
+        max-height: 38px !important;
+        border-radius: 9px !important;
+        font-size: 0.79rem !important;
+        padding: 0 0.7rem !important;
     }}
 
     .stButton button[kind="secondary"] p {{
@@ -1439,17 +1699,15 @@ def inject_custom_css(theme_mode: str = "light") -> None:
 
     .stButton button[kind="secondary"]:hover {{
         background-color: {p['secondary_btn_hover']} !important;
-        border-color: {p['primary']} !important;
-        color: {p['primary']} !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.16) !important;
+        border-color: {p['text_primary']} !important;
+        color: {p['text_primary']} !important;
     }}
 
     .stButton button[kind="secondary"]:active {{
-        transform: translateY(0px) scale(0.97) !important;
+        transform: scale(0.985) !important;
     }}
 
-    /* Sleek thin progress bars */
+    /* Sleek flat progress bars */
     div[data-testid="stProgress"] {{
         margin-top: -0.25rem;
         margin-bottom: 0.55rem;
@@ -1460,28 +1718,22 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         height: 6px !important;
         border-radius: 999px !important;
         overflow: hidden !important;
-        transition: background-color 0.3s ease !important;
     }}
 
     div[data-testid="stProgress"] > div > div > div > div {{
-        background: linear-gradient(90deg, {p['primary']} 0%, {p['primary_gradient_end']} 100%) !important;
+        background: {p['primary']} !important;
         border-radius: 999px !important;
         transform-origin: left center;
-        animation: barGrow 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
-        box-shadow: 0 0 8px {p['btn_glow']} !important;
-        transition: background-color 0.3s ease !important;
+        animation: barGrow 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
     }}
 
-    /* Refined alerts */
+    /* Refined flat alerts */
     div[data-testid="stAlert"],
     div[data-testid="stAlert"] > div,
     div[data-testid="stAlertContainer"],
     div[data-testid="stAlert"] [role="alert"] {{
         background-color: {p['alert_bg']} !important;
-        backdrop-filter: blur(10px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
         color: {p['text_body']} !important;
-        transition: background-color 0.34s ease, color 0.24s ease !important;
     }}
 
     div[data-testid="stAlert"] > div,
@@ -1492,8 +1744,7 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     div[data-testid="stAlert"] {{
         border-radius: 12px !important;
         border: 1px solid {p['card_border']} !important;
-        box-shadow: {p['subcard_shadow']}, inset 0 1px 1px 0 {p['glass_specular']} !important;
-        animation: glassReveal 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+        box-shadow: 0 1px 2px rgba(15, 15, 14, 0.04) !important;
     }}
 
     div[data-testid="stAlert"] [data-testid="stMarkdownContainer"],
@@ -1503,16 +1754,13 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         color: {p['text_body']} !important;
     }}
 
-    /* Clean expander */
+    /* Clean flat expander */
     div[data-testid="stExpander"] details {{
         background-color: {p['card_bg']} !important;
-        backdrop-filter: blur(12px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
         border: 1px solid {p['card_border']} !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         overflow: hidden;
-        box-shadow: {p['subcard_shadow']}, inset 0 1px 1px 0 {p['glass_specular']} !important;
-        transition: background-color 0.34s ease, border-color 0.3s ease !important;
+        box-shadow: 0 1px 2px rgba(15, 15, 14, 0.03) !important;
     }}
 
     div[data-testid="stExpander"] details summary,
@@ -1520,7 +1768,6 @@ def inject_custom_css(theme_mode: str = "light") -> None:
     div[data-testid="stExpander"] details summary:focus {{
         background-color: {p['card_bg']} !important;
         color: {p['text_primary']} !important;
-        transition: background-color 0.25s ease, color 0.24s ease !important;
     }}
 
     div[data-testid="stExpander"] details summary:hover {{
@@ -1530,7 +1777,6 @@ def inject_custom_css(theme_mode: str = "light") -> None:
 
     div[data-testid="stExpanderDetails"] {{
         background-color: {p['card_bg']} !important;
-        transition: background-color 0.34s ease !important;
     }}
 
     div[data-testid="stExpander"] summary p,
@@ -1540,11 +1786,76 @@ def inject_custom_css(theme_mode: str = "light") -> None:
         fill: currentColor;
     }}
 
+    /* Scroll-driven bidirectional text reveal using cover range (~200px visible reveal distance both up & down) */
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {{
+        @keyframes vsfcScrollTextReveal {{
+            cover 0% {{
+                opacity: 0;
+                transform: translateY(28px) scale(0.985);
+            }}
+            cover 22%,
+            cover 78% {{
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }}
+            cover 100% {{
+                opacity: 0;
+                transform: translateY(-22px) scale(0.985);
+            }}
+        }}
+
+        @keyframes vsfcScrollTextFadeOnly {{
+            cover 0% {{
+                opacity: 0.12;
+            }}
+            cover 22%,
+            cover 78% {{
+                opacity: 1;
+            }}
+            cover 100% {{
+                opacity: 0.12;
+            }}
+        }}
+
+        [data-testid="stMain"] [data-testid="stMarkdownContainer"],
+        [data-testid="stMain"] div[data-testid="stProgress"],
+        [data-testid="stMain"] div[data-testid="stAlert"],
+        [data-testid="stMain"] div[data-testid="stExpander"],
+        [data-testid="stMain"] .vsfc-scroll-item {{
+            animation: vsfcScrollTextReveal auto linear both;
+            animation-timeline: view(block);
+        }}
+
+        /* Avoid double-fading nested containers so parent and child never multiply opacity */
+        [data-testid="stMain"] div[data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+        [data-testid="stMain"] div[data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+        [data-testid="stMain"] button [data-testid="stMarkdownContainer"],
+        [data-testid="stMain"] [data-testid="stMarkdownContainer"]:has(.vsfc-scroll-item) {{
+            animation: none;
+            animation-timeline: auto;
+        }}
+
+        @media (prefers-reduced-motion: reduce) {{
+            [data-testid="stMain"] [data-testid="stMarkdownContainer"],
+            [data-testid="stMain"] div[data-testid="stProgress"],
+            [data-testid="stMain"] div[data-testid="stAlert"],
+            [data-testid="stMain"] div[data-testid="stExpander"],
+            [data-testid="stMain"] .vsfc-scroll-item {{
+                animation-name: vsfcScrollTextFadeOnly;
+            }}
+        }}
+    }}
+
     @media (prefers-reduced-motion: reduce) {{
-        *, *::before, *::after {{
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
+        .st-key-board_card_baseline,
+        .st-key-board_card_phobert,
+        .st-key-board_card_single,
+        .st-key-board_card_single_baseline,
+        .st-key-board_card_single_phobert,
+        .vsfc-mode-pill,
+        .vsfc-conf-fill,
+        .vsfc-donut-ring {{
+            animation: none !important;
         }}
     }}
     </style>
@@ -1581,9 +1892,9 @@ def render_header(lang: str = "vi", theme_mode: str = "light", mode_key: Optiona
 
     render_html(
         f"""
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:1.1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:0.55rem;">
             <div>
-                <h1 style="margin:0; font-size:1.72rem; font-weight:750; color:{p['text_primary']}; letter-spacing:-0.025em; line-height:1.25;">
+                <h1 style="margin:0; font-size:1.58rem; font-weight:750; color:{p['text_primary']}; letter-spacing:-0.03em; line-height:1.2;">
                     {t['app_title']}
                 </h1>
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:6px; font-size:0.88rem; color:{p['text_muted']};">
@@ -1676,15 +1987,15 @@ def _render_task_subcard_html(
     conf_pct = max(0.0, min(100.0, confidence * 100.0))
 
     return (
-        f"<div style='background:{p['subcard_bg']}; backdrop-filter:blur(10px) saturate(180%); -webkit-backdrop-filter:blur(10px) saturate(180%); "
-        f"border:1px solid {p['subcard_border']}; border-radius:11px; padding:12px 14px; margin-bottom:10px; "
-        f"box-shadow:{p['subcard_shadow']}, inset 0 1px 0 0 {p['glass_specular']}; transition:transform 0.22s ease, box-shadow 0.22s ease;'>"
+        f"<div class='vsfc-scroll-item' style='background:{p['subcard_bg']}; "
+        f"border:1px solid {p['subcard_border']}; border-radius:12px; padding:12px 14px; margin-bottom:10px; "
+        f"transition:border-color 0.2s ease;'>"
         f"<div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;'>"
         f"<span style='font-size:0.74rem; font-weight:600; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.04em;'>{task_label}</span>"
         f"<span style='background:{chip_bg}; color:{accent}; border:1px solid {chip_border}; "
         f"font-size:0.74rem; font-weight:700; padding:2px 8px; border-radius:6px; font-variant-numeric:tabular-nums;'>{conf_pct:.1f}%</span>"
         f"</div>"
-        f"<div style='font-size:1.05rem; font-weight:700; color:{p['text_primary']}; margin-bottom:10px;'>{pred_name}</div>"
+        f"<div style='font-size:1.05rem; font-weight:700; color:{p['text_primary']}; margin-bottom:10px; letter-spacing:-0.015em;'>{pred_name}</div>"
         f"<div style='width:100%; height:4px; background:{p['track_bg']}; border-radius:999px; overflow:hidden;'>"
         f"<div class='vsfc-conf-fill' style='width:{conf_pct:.1f}%; height:100%; background:{accent}; border-radius:999px;'></div>"
         f"</div>"
@@ -1758,16 +2069,16 @@ def _build_conic_donut_html(
         )
 
     return (
-        f"<div style='background:{p['subcard_bg']}; backdrop-filter:blur(10px) saturate(180%); -webkit-backdrop-filter:blur(10px) saturate(180%); "
-        f"border:1px solid {p['subcard_border']}; border-radius:11px; padding:10px 12px; "
-        f"box-shadow:{p['subcard_shadow']}, inset 0 1px 0 0 {p['glass_specular']}; transition:transform 0.22s ease, box-shadow 0.22s ease;'>"
+        f"<div class='vsfc-scroll-item' style='background:{p['subcard_bg']}; "
+        f"border:1px solid {p['subcard_border']}; border-radius:12px; padding:10px 12px; "
+        f"transition:border-color 0.2s ease;'>"
         f"<div style='display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:9px;'>"
         f"<span style='font-size:0.72rem; font-weight:700; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.04em;'>{html.escape(task_title)}</span>"
         f"<span style='font-size:0.68rem; font-weight:700; color:{clarity_color}; background:{p['pill_bg']}; border:1px solid {p['pill_border']}; padding:1px 7px; border-radius:999px; white-space:nowrap;'>{html.escape(clarity_text)}</span>"
         f"</div>"
         f"<div style='display:flex; align-items:center; gap:11px;'>"
-        f"<div class='vsfc-donut-ring' style='width:74px; height:74px; flex-shrink:0; border-radius:999px; background:{gradient}; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(15,23,42,0.04);'>"
-        f"<div style='width:48px; height:48px; border-radius:999px; background:{p['subcard_bg']}; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(15,23,42,0.08), inset 0 1px 0 0 {p['glass_specular']};'>"
+        f"<div class='vsfc-donut-ring' style='width:74px; height:74px; flex-shrink:0; border-radius:999px; background:{gradient}; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px rgba(15,15,14,0.04);'>"
+        f"<div style='width:48px; height:48px; border-radius:999px; background:{p['subcard_bg']}; display:flex; flex-direction:column; align-items:center; justify-content:center;'>"
         f"<span style='font-size:0.8rem; font-weight:800; color:{p['text_primary']}; line-height:1.05; font-variant-numeric:tabular-nums;'>{top_prob * 100.0:.1f}%</span>"
         f"<span style='font-size:0.56rem; font-weight:700; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.03em;'>{html.escape(t['top_badge'])}</span>"
         f"</div>"
@@ -1807,35 +2118,36 @@ def render_prediction_card(
     with make_card_container(container_key):
         header_html = (
             f"<div style='display:flex; justify-content:space-between; align-items:center; "
-            f"padding-bottom:0.85rem; margin-bottom:0.9rem; border-bottom:1px solid {p['row_divider']};'>"
+            f"padding-bottom:0.65rem; margin-bottom:0.75rem; border-bottom:1px solid {p['row_divider']};'>"
             f"<div style='display:flex; align-items:center; gap:9px;'>"
-            f"<span style='width:11px; height:11px; border-radius:999px; border:2.5px solid {ring_color}; display:inline-block;'></span>"
-            f"<span style='font-size:1.05rem; font-weight:700; color:{p['text_primary']};'>{model_title}</span>"
+            f"<span style='width:10px; height:10px; border-radius:999px; border:2.5px solid {ring_color}; display:inline-block;'></span>"
+            f"<span style='font-size:1.02rem; font-weight:700; color:{p['text_primary']}; letter-spacing:-0.015em;'>{model_title}</span>"
             f"</div>"
-            f"<span style='background:{p['pill_bg']}; color:{p['text_subtle']}; border:1px solid {p['pill_border']}; font-size:0.75rem; font-weight:600; "
-            f"padding:3px 9px; border-radius:6px; font-variant-numeric:tabular-nums; box-shadow:{p['subcard_shadow']}, inset 0 1px 0 0 {p['glass_specular']}; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);'>"
+            f"<span style='background:{p['pill_bg']}; color:{p['text_subtle']}; border:1px solid {p['pill_border']}; font-size:0.74rem; font-weight:600; "
+            f"padding:2px 8px; border-radius:6px; font-variant-numeric:tabular-nums;'>"
             f"{latency_ms:.2f} ms · {device_info}{size_text}"
             f"</span>"
             f"</div>"
         )
+        subcards_html = (
+            f"<div style='display:grid; grid-template-columns:repeat(auto-fit, minmax(195px, 1fr)); gap:10px; margin-bottom:4px;'>"
+            + _render_task_subcard_html(t["task_sentiment"], s_name, float(sent_res["confidence"]), s_meta, theme_mode)
+            + _render_task_subcard_html(t["task_topic"], t_name, float(topic_res["confidence"]), t_meta, theme_mode)
+            + f"</div>"
+        )
         donuts_html = (
-            f"<div style='font-size:0.78rem; font-weight:700; color:{p['text_subtle']}; text-transform:uppercase; letter-spacing:0.04em; margin:0.5rem 0 0.45rem 0;'>{html.escape(t['donut_section'])}</div>"
+            f"<div style='font-size:0.74rem; font-weight:700; color:{p['text_subtle']}; text-transform:uppercase; letter-spacing:0.04em; margin:0.25rem 0 0.35rem 0;'>{html.escape(t['donut_section'])}</div>"
             f"<div class='vsfc-donut-grid'>"
             + _build_conic_donut_html(t["task_sentiment"], sent_res["distribution"], SENTIMENT_UI_META, sent_res["label"], lang, theme_mode)
             + _build_conic_donut_html(t["task_topic"], topic_res["distribution"], TOPIC_UI_META, topic_res["label"], lang, theme_mode)
             + f"</div>"
         )
-        render_html(
-            header_html
-            + _render_task_subcard_html(t["task_sentiment"], s_name, float(sent_res["confidence"]), s_meta, theme_mode)
-            + _render_task_subcard_html(t["task_topic"], t_name, float(topic_res["confidence"]), t_meta, theme_mode)
-            + donuts_html
-        )
+        render_html(header_html + subcards_html + donuts_html)
 
         render_distribution_bars(
             t["task_sentiment"], sent_res["distribution"], SENTIMENT_UI_META, sent_res["label"], lang, theme_mode
         )
-        render_html("<div style='height:6px;'></div>")
+        render_html("<div style='height:4px;'></div>")
         render_distribution_bars(
             t["task_topic"], topic_res["distribution"], TOPIC_UI_META, topic_res["label"], lang, theme_mode
         )
@@ -2004,7 +2316,7 @@ def main():
         page_title=I18N.get(_init_lang, I18N["vi"])["app_title"],
         page_icon="🎓",
         layout="wide",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state="collapsed",
     )
 
     if st.session_state.get("seg_theme_mode") in THEME_PALETTES:
@@ -2016,6 +2328,12 @@ def main():
         st.session_state["ui_lang"] = st.session_state["seg_ui_lang"]
     elif "ui_lang" not in st.session_state:
         st.session_state["ui_lang"] = "vi"
+
+    # Inject CSS immediately before rendering sidebar or loading models to prevent FOUC on F5 reload
+    initial_theme = _get_theme()
+    css_slot = st.empty()
+    with css_slot:
+        inject_custom_css(initial_theme)
 
     presets = get_presets()
     if "user_text" not in st.session_state:
@@ -2060,129 +2378,128 @@ def main():
         t_cur = I18N[cur_lang]
         p_cur = THEME_PALETTES[cur_theme]
 
-        render_html(
-            f"""
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:0.85rem; padding-bottom:0.75rem; border-bottom:1px solid {p_cur['divider']};">
-                <div style="width:28px; height:28px; border-radius:8px; background:{p_cur['primary']}; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.78rem; letter-spacing:-0.02em;">VS</div>
-                <div>
-                    <div style="font-weight:800; font-size:1.05rem; color:{p_cur['brand_text']}; line-height:1.15; letter-spacing:-0.02em;">VSFC.Board</div>
-                    <div style="font-size:0.74rem; color:{p_cur['text_muted']};">{t_cur['brand_sub']}</div>
+        # Row 1: Slim Top Nav Bar (Brand on left, compact Theme/Lang switchers pinned right)
+        col_brand, _col_spacer, col_toggles = st.columns([2.2, 2.9, 1.3], vertical_alignment="center")
+        with col_brand:
+            render_html(
+                f"""
+                <div style="display:flex; align-items:center; gap:10px; white-space:nowrap;">
+                    <div style="width:28px; height:28px; min-width:28px; flex-shrink:0; border-radius:8px; background:{p_cur['brand_mark_bg']}; color:{p_cur['brand_mark_fg']}; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.76rem; letter-spacing:-0.02em;">VS</div>
+                    <div style="display:flex; align-items:baseline; gap:8px; white-space:nowrap;">
+                        <span style="font-weight:700; font-size:1rem; color:{p_cur['brand_text']}; letter-spacing:-0.025em; white-space:nowrap;">VSFC.Board</span>
+                        <span style="font-size:0.75rem; color:{p_cur['text_muted']}; white-space:nowrap;">{t_cur['brand_sub']}</span>
+                    </div>
                 </div>
-            </div>
-            """
-        )
-
-        col_theme, col_lang = st.columns([0.92, 1.08], gap="small")
-        with col_theme:
-            theme_mode = _render_sidebar_segmented(
-                label=t_cur["theme_label"],
-                options=["light", "dark"],
-                labels_map={"light": ":material/light_mode:", "dark": ":material/dark_mode:"},
-                state_key="theme_mode",
-                widget_key="seg_theme_mode",
-                help_text=t_cur["theme_help"],
+                """
             )
-        with col_lang:
-            lang = _render_sidebar_segmented(
-                label=t_cur["lang_label"],
-                options=["vi", "en"],
-                labels_map={"vi": "VI", "en": "EN"},
-                state_key="ui_lang",
-                widget_key="seg_ui_lang",
-                help_text=t_cur["lang_help"],
-            )
+        with col_toggles:
+            col_theme, col_lang = st.columns([0.92, 1.08], gap="small")
+            with col_theme:
+                theme_mode = _render_sidebar_segmented(
+                    label=t_cur["theme_label"],
+                    options=["light", "dark"],
+                    labels_map={"light": ":material/light_mode:", "dark": ":material/dark_mode:"},
+                    state_key="theme_mode",
+                    widget_key="seg_theme_mode",
+                    help_text=t_cur["theme_help"],
+                )
+            with col_lang:
+                lang = _render_sidebar_segmented(
+                    label=t_cur["lang_label"],
+                    options=["vi", "en"],
+                    labels_map={"vi": "VI", "en": "EN"},
+                    state_key="ui_lang",
+                    widget_key="seg_ui_lang",
+                    help_text=t_cur["lang_help"],
+                )
 
         t = I18N[lang]
         p = THEME_PALETTES[theme_mode]
 
-        render_html(f"<div style='height:1px; background:{p['divider']}; margin:0.85rem 0;'></div>")
-        render_html(
-            f"<div style='font-size:0.72rem; font-weight:700; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.35rem;'>"
-            f"{t['sec_controls']}"
-            f"</div>"
-        )
+        render_html(f"<div style='height:1px; background:{p['divider']}; margin:0.25rem 0 0.35rem 0;'></div>")
 
-        mode_pairs: List[Tuple[str, str]] = []
-        if baseline_model is not None:
-            mode_pairs.append(("baseline", t["mode_baseline"]))
-        if phobert_model is not None:
-            mode_pairs.append(("phobert", t["mode_phobert"]))
-        if baseline_model is not None and phobert_model is not None:
-            mode_pairs.append(("both", t["mode_both"]))
+        # Row 2: Single Compact Control Strip (Horizontal Radio | VI Preset + Btn | EN Preset + Btn)
+        c_mode, c_preset_vi, c_preset_en = st.columns([1.28, 1.92, 2.0], gap="small", vertical_alignment="bottom")
 
-        if not mode_pairs:
-            st.error(t["no_ckpt_err"])
-            selected_mode_key = None
-        else:
-            keys_list = [k for k, _ in mode_pairs]
-            labels_list = [lbl for _, lbl in mode_pairs]
-            label_to_key = {lbl: k for k, lbl in mode_pairs}
-            stored_key = st.session_state.get("selected_mode_key", keys_list[-1])
-            default_idx = keys_list.index(stored_key) if stored_key in keys_list else len(labels_list) - 1
+        with c_mode:
+            mode_pairs: List[Tuple[str, str]] = []
+            if baseline_model is not None:
+                mode_pairs.append(("baseline", t["mode_baseline"]))
+            if phobert_model is not None:
+                mode_pairs.append(("phobert", t["mode_phobert"]))
+            if baseline_model is not None and phobert_model is not None:
+                mode_pairs.append(("both", t["mode_both"]))
 
-            chosen_label = st.radio(
-                t["mode_radio_label"],
-                options=labels_list,
-                index=default_idx,
-                key=f"model_mode_radio_{lang}",
-                help=t["mode_radio_help"],
-            )
-            selected_mode_key = label_to_key[chosen_label]
-            st.session_state["selected_mode_key"] = selected_mode_key
+            if not mode_pairs:
+                st.error(t["no_ckpt_err"])
+                selected_mode_key = None
+            else:
+                keys_list = [k for k, _ in mode_pairs]
+                labels_list = [lbl for _, lbl in mode_pairs]
+                label_to_key = {lbl: k for k, lbl in mode_pairs}
+                stored_key = st.session_state.get("selected_mode_key", keys_list[-1])
+                default_idx = keys_list.index(stored_key) if stored_key in keys_list else len(labels_list) - 1
 
-        render_html(f"<div style='height:1px; background:{p['divider']}; margin:0.9rem 0;'></div>")
-        render_html(
-            f"<div style='font-size:0.72rem; font-weight:700; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.4rem;'>{t['sec_presets']}</div>"
-        )
+                chosen_label = st.radio(
+                    t["mode_radio_label"],
+                    options=labels_list,
+                    index=default_idx,
+                    key=f"model_mode_radio_{lang}",
+                    help=t["mode_radio_help"],
+                    horizontal=True,
+                )
+                selected_mode_key = label_to_key[chosen_label]
+                st.session_state["selected_mode_key"] = selected_mode_key
 
-        preset_title_key = "title_en" if lang == "en" else "title"
-        preset_dict = {item.get(preset_title_key, item["title"]): item["text"] for item in presets}
-        preset_options = list(preset_dict.keys())
-        cur_preset_idx = st.session_state.get("selected_preset_idx", 0)
-        if not isinstance(cur_preset_idx, int) or not (0 <= cur_preset_idx < len(preset_options)):
-            cur_preset_idx = 0
+        with c_preset_vi:
+            preset_title_key = "title_en" if lang == "en" else "title"
+            preset_dict = {item.get(preset_title_key, item["title"]): item["text"] for item in presets}
+            preset_options = list(preset_dict.keys())
+            cur_preset_idx = st.session_state.get("selected_preset_idx", 0)
+            if not isinstance(cur_preset_idx, int) or not (0 <= cur_preset_idx < len(preset_options)):
+                cur_preset_idx = 0
 
-        selected_preset_title = st.selectbox(
-            t["preset_select_label"],
-            options=preset_options,
-            index=cur_preset_idx,
-            key=f"preset_select_{lang}",
-        )
-        if selected_preset_title in preset_options:
-            st.session_state["selected_preset_idx"] = preset_options.index(selected_preset_title)
+            col_sel_vi, col_btn_vi = st.columns([2.5, 1.35], gap="small", vertical_alignment="bottom")
+            with col_sel_vi:
+                selected_preset_title = st.selectbox(
+                    t["preset_select_label"],
+                    options=preset_options,
+                    index=cur_preset_idx,
+                    key=f"preset_select_{lang}",
+                )
+                if selected_preset_title in preset_options:
+                    st.session_state["selected_preset_idx"] = preset_options.index(selected_preset_title)
+            with col_btn_vi:
+                if st.button(t["load_preset_btn"], use_container_width=True):
+                    st.session_state["user_text"] = preset_dict[selected_preset_title]
+                    st.session_state["text_area_version"] = st.session_state.get("text_area_version", 0) + 1
+                    st.session_state.pop("last_analyzed_text", None)
 
-        if st.button(t["load_preset_btn"], use_container_width=True):
-            st.session_state["user_text"] = preset_dict[selected_preset_title]
-            st.session_state["text_area_version"] = st.session_state.get("text_area_version", 0) + 1
-            st.session_state.pop("last_analyzed_text", None)
+        with c_preset_en:
+            en_presets = get_english_presets()
+            en_preset_dict = {item["title"]: item["text"] for item in en_presets}
+            en_preset_options = list(en_preset_dict.keys())
+            cur_en_preset_idx = st.session_state.get("selected_en_preset_idx", 0)
+            if not isinstance(cur_en_preset_idx, int) or not (0 <= cur_en_preset_idx < len(en_preset_options)):
+                cur_en_preset_idx = 0
 
-        # English Presets Library (Second distinct library)
-        render_html(
-            f"<div style='font-size:0.72rem; font-weight:700; color:{p['text_muted']}; text-transform:uppercase; letter-spacing:0.06em; margin-top:0.65rem; margin-bottom:0.4rem;'>{t['sec_presets_en']}</div>"
-        )
+            col_sel_en, col_btn_en = st.columns([2.35, 1.55], gap="small", vertical_alignment="bottom")
+            with col_sel_en:
+                selected_en_preset_title = st.selectbox(
+                    t["preset_en_select_label"],
+                    options=en_preset_options,
+                    index=cur_en_preset_idx,
+                    key=f"preset_select_en_{lang}",
+                )
+                if selected_en_preset_title in en_preset_options:
+                    st.session_state["selected_en_preset_idx"] = en_preset_options.index(selected_en_preset_title)
+            with col_btn_en:
+                if st.button(t["load_en_preset_btn"], key=f"btn_load_en_preset_{lang}", use_container_width=True):
+                    st.session_state["user_text"] = en_preset_dict[selected_en_preset_title]
+                    st.session_state["text_area_version"] = st.session_state.get("text_area_version", 0) + 1
+                    st.session_state.pop("last_analyzed_text", None)
 
-        en_presets = get_english_presets()
-        en_preset_dict = {item["title"]: item["text"] for item in en_presets}
-        en_preset_options = list(en_preset_dict.keys())
-        cur_en_preset_idx = st.session_state.get("selected_en_preset_idx", 0)
-        if not isinstance(cur_en_preset_idx, int) or not (0 <= cur_en_preset_idx < len(en_preset_options)):
-            cur_en_preset_idx = 0
-
-        selected_en_preset_title = st.selectbox(
-            t["preset_en_select_label"],
-            options=en_preset_options,
-            index=cur_en_preset_idx,
-            key=f"preset_select_en_{lang}",
-        )
-        if selected_en_preset_title in en_preset_options:
-            st.session_state["selected_en_preset_idx"] = en_preset_options.index(selected_en_preset_title)
-
-        if st.button(t["load_en_preset_btn"], key=f"btn_load_en_preset_{lang}", use_container_width=True):
-            st.session_state["user_text"] = en_preset_dict[selected_en_preset_title]
-            st.session_state["text_area_version"] = st.session_state.get("text_area_version", 0) + 1
-            st.session_state.pop("last_analyzed_text", None)
-
-        render_html(f"<div style='height:1px; background:{p['divider']}; margin:0.9rem 0;'></div>")
+        # Row 3: Compact Single-Line Status Strip
         st.markdown(
             """
             **{}**:
@@ -2199,8 +2516,10 @@ def main():
             )
         )
 
-    # Apply theme CSS after theme selection so toggling updates immediately in the same rerun
-    inject_custom_css(theme_mode)
+    # Refresh theme CSS in-place only if user toggled theme during this rerun
+    if theme_mode != initial_theme:
+        with css_slot:
+            inject_custom_css(theme_mode)
 
     # 3. Main Header
     render_header(lang=lang, theme_mode=theme_mode, mode_key=selected_mode_key)
@@ -2221,7 +2540,7 @@ def main():
             label=t["textarea_label"],
             value=st.session_state["user_text"],
             key=f"user_text_input_{st.session_state.get('text_area_version', 0)}",
-            height=112,
+            height=92,
             placeholder=t["textarea_placeholder"],
             help=t["textarea_help"],
             label_visibility="collapsed",
