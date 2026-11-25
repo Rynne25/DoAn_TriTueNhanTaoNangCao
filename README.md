@@ -1,4 +1,10 @@
 # Project 1 — Text Classification of Vietnamese Student Feedback
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=Tr-Hieu205/DoAn_TriTueNhanTaoNangCao&branch=main&mainModule=app/app.py)
+[![GitHub Release Weights](https://img.shields.io/badge/Weights-PhoBERT%20v1.0.0%20(516%20MB)-8B5CF6)](https://github.com/Tr-Hieu205/DoAn_TriTueNhanTaoNangCao/releases/tag/v1.0.0)
+
+**🌐 Web Demo Trực Tuyến (Streamlit Cloud)**: [Mở / Khởi chạy Web App trên Streamlit Cloud](https://share.streamlit.io/deploy?repository=Tr-Hieu205/DoAn_TriTueNhanTaoNangCao&branch=main&mainModule=app/app.py)
+
 **Team 25**:
 - Lê Văn Hoài Rin (Student ID: 29211332113)
 - Nguyễn Trung Hiếu (Student ID: 29211362521)

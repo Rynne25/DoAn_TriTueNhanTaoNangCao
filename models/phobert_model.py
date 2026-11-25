@@ -4,6 +4,7 @@ Mô hình Deep Learning chính của đồ án: Fine-tune PhoBERT trên UIT-VSFC
 Kiến trúc: vinai/phobert-base-v2 + Masked Mean Pooling + 2 nhánh phân loại MLP đa nhiệm.
 """
 
+import gc
 import json
 import os
 import sys
@@ -255,9 +256,15 @@ class PhoBERTMultiTask(nn.Module):
             config=config, backbone=backbone,
         )
         map_location = device or "cpu"
-        state_dict = torch.load(weights_file, map_location=map_location, weights_only=True)
+        try:
+            state_dict = torch.load(weights_file, map_location=map_location, weights_only=True, mmap=True)
+        except TypeError:
+            state_dict = torch.load(weights_file, map_location=map_location, weights_only=True)
         model.load_state_dict(state_dict)
+        del state_dict
+        gc.collect()
         model.checkpoint_dir = save_dir
         if device is not None:
             model.to(device)
+        model.eval()
         return model
