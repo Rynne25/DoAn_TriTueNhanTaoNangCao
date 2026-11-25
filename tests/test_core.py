@@ -1,6 +1,6 @@
 """
 tests/test_core.py
-Bộ kiểm thử cốt lõi cho UIT-VSFC: Dữ liệu Parquet, Mô hình Baseline, PhoBERT Multi-Task và Plotly UI Charts.
+Bộ kiểm thử cốt lõi cho UIT-VSFC: Dữ liệu Parquet, Mô hình Baseline, PhoBERT Multi-Task và Plotly UI Charts (VI/EN).
 """
 
 import json
@@ -103,8 +103,11 @@ def test_saved_checkpoints_and_metrics():
 
 
 def test_ui_charts_builders():
-    """Kiểm tra toàn bộ các hàm dựng biểu đồ Plotly trong app.ui_charts trả về go.Figure hợp lệ."""
+    """Kiểm tra toàn bộ hàm dựng biểu đồ và trích xuất đặc trưng trong app.ui_charts cho cả lang='vi' và lang='en'."""
     from app.ui_charts import (
+        compute_prediction_features,
+        extract_token_feature_importance,
+        format_class_label,
         make_confidence_gauge,
         make_confusion_matrix_heatmap,
         make_headline_comparison_chart,
@@ -112,53 +115,90 @@ def test_ui_charts_builders():
         make_multimetric_radar_chart,
         make_per_class_f1_chart,
         make_probability_bar_chart,
+        make_sentence_multitask_radar_chart,
         make_split_donut_chart,
+        make_token_importance_chart,
     )
+
+    assert format_class_label("positive", "vi") == "Tích cực"
+    assert format_class_label("positive", "en") == "Positive"
+    assert format_class_label("training_program", "vi") == "Chương trình đào tạo"
+    assert format_class_label("training_program", "en") == "Training Program"
 
     with open("results/metrics.json", "r", encoding="utf-8") as f:
         metrics = json.load(f)
 
-    dataset_stats = metrics.get(
-        "dataset_stats",
-        {
-            "split_sizes": {"train": 11426, "validation": 1583, "test": 3166, "total": 16175},
-            "sentiment_distribution": {"negative": 7439, "neutral": 698, "positive": 8038},
-            "topic_distribution": {
-                "lecturer": 11598,
-                "training_program": 2975,
-                "facility": 758,
-                "others": 844,
-            },
-        },
-    )
+    dataset_stats = metrics.get("dataset_stats", {})
     cm_sent = (
         metrics.get("confusion_matrix", {})
         .get("phobert", {})
-        .get("sentiment", [[1345, 22, 42], [25, 108, 34], [38, 18, 1534]])
+        .get("sentiment", [[1361, 21, 27], [27, 92, 48], [50, 18, 1522]])
     )
     cm_topic = (
         metrics.get("confusion_matrix", {})
         .get("phobert", {})
-        .get("topic", [[2115, 92, 24, 59], [88, 456, 12, 16], [11, 8, 134, 6], [35, 16, 4, 104]])
+        .get("topic", [[2126, 123, 4, 37], [87, 458, 4, 23], [2, 4, 138, 1], [37, 32, 3, 87]])
     )
 
-    figures = [
-        make_confidence_gauge("Cảm xúc", "positive", 0.96),
-        make_probability_bar_chart({"negative": 0.02, "neutral": 0.02, "positive": 0.96}, "Xác suất Cảm xúc"),
-        make_headline_comparison_chart(metrics),
-        make_multimetric_radar_chart(metrics),
-        make_per_class_f1_chart(metrics, "sentiment"),
-        make_per_class_f1_chart(metrics, "topic"),
-        make_confusion_matrix_heatmap(cm_sent, SENTIMENT_LABELS, "CM Sentiment"),
-        make_confusion_matrix_heatmap(cm_topic, TOPIC_LABELS, "CM Topic"),
-        make_split_donut_chart(dataset_stats),
-        make_label_distribution_chart(dataset_stats, "sentiment"),
-        make_label_distribution_chart(dataset_stats, "topic"),
-    ]
+    sample_primary = {
+        "sentiment": {
+            "label": "positive",
+            "confidence": 0.94,
+            "distribution": {"negative": 0.03, "neutral": 0.03, "positive": 0.94},
+        },
+        "topic": {
+            "label": "lecturer",
+            "confidence": 0.91,
+            "distribution": {"lecturer": 0.91, "training_program": 0.05, "facility": 0.02, "others": 0.02},
+        },
+    }
+    sample_compare = {
+        "sentiment": {
+            "label": "positive",
+            "confidence": 0.85,
+            "distribution": {"negative": 0.08, "neutral": 0.07, "positive": 0.85},
+        },
+        "topic": {
+            "label": "lecturer",
+            "confidence": 0.82,
+            "distribution": {"lecturer": 0.82, "training_program": 0.10, "facility": 0.04, "others": 0.04},
+        },
+    }
 
-    for fig in figures:
-        assert isinstance(fig, go.Figure), f"Expected go.Figure, got {type(fig)}"
-        assert len(fig.data) > 0, "Plotly Figure phải có ít nhất 1 trace trong fig.data"
+    feats = compute_prediction_features(sample_primary)
+    for k in ("sent_conf", "topic_conf", "sent_entropy", "topic_entropy", "sent_margin", "topic_margin", "joint_conf"):
+        assert k in feats and isinstance(feats[k], float)
+
+    b_model = VietnameseFeedbackBaseline.load("saved_models/baseline.joblib") if os.path.isfile("saved_models/baseline.joblib") else None
+    seg_text = segment_text("Thầy cô giảng dạy rất nhiệt tình và giải đáp thắc mắc chi tiết")
+    tok_weights = extract_token_feature_importance(b_model, seg_text, sent_label_id=2, topic_label_id=0, top_k=6)
+    assert isinstance(tok_weights, list) and len(tok_weights) > 0
+    assert "token" in tok_weights[0] and "sent_weight" in tok_weights[0] and "topic_weight" in tok_weights[0]
+
+    for lang in ("vi", "en"):
+        figures = [
+            make_confidence_gauge("Cảm xúc" if lang == "vi" else "Sentiment", "positive", 0.96, lang=lang),
+            make_probability_bar_chart(
+                sample_primary["sentiment"]["distribution"],
+                "Xác suất Cảm xúc" if lang == "vi" else "Sentiment Probability",
+                lang=lang,
+                compare_distribution=sample_compare["sentiment"]["distribution"],
+            ),
+            make_sentence_multitask_radar_chart(sample_primary, compare_res=sample_compare, lang=lang),
+            make_token_importance_chart(tok_weights, lang=lang),
+            make_headline_comparison_chart(metrics, lang=lang),
+            make_multimetric_radar_chart(metrics, lang=lang),
+            make_per_class_f1_chart(metrics, "sentiment", lang=lang),
+            make_per_class_f1_chart(metrics, "topic", lang=lang),
+            make_confusion_matrix_heatmap(cm_sent, SENTIMENT_LABELS, "CM Sentiment", lang=lang),
+            make_confusion_matrix_heatmap(cm_topic, TOPIC_LABELS, "CM Topic", lang=lang),
+            make_split_donut_chart(dataset_stats, lang=lang),
+            make_label_distribution_chart(dataset_stats, "sentiment", lang=lang),
+            make_label_distribution_chart(dataset_stats, "topic", lang=lang),
+        ]
+        for fig in figures:
+            assert isinstance(fig, go.Figure), f"Expected go.Figure, got {type(fig)}"
+            assert len(fig.data) > 0, "Plotly Figure phải có ít nhất 1 trace trong fig.data"
 
 
 # Giữ alias tương thích ngược
