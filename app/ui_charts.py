@@ -137,11 +137,18 @@ def inject_vibrant_theme() -> None:
         }
 
         /* Form Inputs & Buttons Dark Cohesive Styling */
-        .stTextArea textarea, .stSelectbox div[data-baseweb="select"] > div {
-            background-color: rgba(15, 23, 42, 0.85) !important;
+        .stTextArea textarea,
+        .stSelectbox div[data-baseweb="select"] > div,
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="base-input"],
+        div[data-baseweb="popover"] ul {
+            background-color: #0F172A !important;
             color: #F8FAFC !important;
-            border: 1px solid rgba(139, 92, 246, 0.35) !important;
+            border: 1px solid rgba(139, 92, 246, 0.4) !important;
             border-radius: 12px !important;
+        }
+        div[data-baseweb="select"] * {
+            color: #F8FAFC !important;
         }
         .stTextArea textarea:focus {
             border-color: #22D3EE !important;
@@ -668,9 +675,11 @@ def make_confidence_gauge(
         go.Indicator(
             mode="gauge+number",
             value=round(pct, 1),
-            number={"suffix": "%", "font": {"size": 26, "color": TEXT_LIGHT, "family": "JetBrains Mono, monospace"}},
+            domain={"x": [0.04, 0.96], "y": [0.0, 0.74]},
+            number={"suffix": "%", "font": {"size": 24, "color": TEXT_LIGHT, "family": "JetBrains Mono, monospace"}},
             title={
-                "text": f"<span style='font-size:12px;color:#94A3B8'>{title}</span><br><b style='font-size:14px;color:{bar_color}'>{clean_label}</b>",
+                "text": f"<span style='font-size:12px;color:#94A3B8'>{title}</span><br><b style='font-size:13px;color:{bar_color}'>{clean_label}</b>",
+                "font": {"size": 13, "color": TEXT_LIGHT},
             },
             gauge={
                 "axis": {"range": [0, 100], "tickwidth": 1, "tickcolor": "#475569", "tickfont": {"size": 10}},
@@ -686,7 +695,9 @@ def make_confidence_gauge(
             },
         )
     )
-    return _apply_dark_layout(fig, height=195)
+    fig = _apply_dark_layout(fig, height=215)
+    fig.update_layout(margin=dict(l=18, r=18, t=42, b=14))
+    return fig
 
 
 def make_probability_bar_chart(
