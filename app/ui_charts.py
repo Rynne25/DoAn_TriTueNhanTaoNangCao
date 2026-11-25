@@ -130,14 +130,23 @@ def inject_vibrant_theme() -> None:
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
 
-        [data-testid="stHeader"] {
-            background: rgba(7, 9, 19, 0.65) !important;
-            backdrop-filter: blur(10px);
+        header[data-testid="stHeader"],
+        [data-testid="stHeader"],
+        [data-testid="stToolbar"],
+        [data-testid="stDecoration"],
+        [data-testid="stStatusWidget"],
+        .stAppDeployButton,
+        .stDeployButton,
+        #MainMenu,
+        footer {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
         }
 
         .block-container {
-            padding-top: 1.35rem !important;
-            padding-bottom: 2.5rem !important;
+            padding-top: 0.75rem !important;
+            padding-bottom: 2rem !important;
             max-width: 1480px !important;
         }
 
