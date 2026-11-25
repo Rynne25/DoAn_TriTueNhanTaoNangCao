@@ -116,6 +116,20 @@ def inject_vibrant_theme() -> None:
             color: #E2E8F0 !important;
         }
 
+        code {
+            background: rgba(139, 92, 246, 0.22) !important;
+            color: #22D3EE !important;
+            border: 1px solid rgba(34, 211, 238, 0.38) !important;
+            padding: 0.12rem 0.42rem !important;
+            border-radius: 6px !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 0.84em !important;
+        }
+
+        label, .stMarkdown p, .stRadio label, .stSelectbox label, .stTextArea label {
+            color: #E2E8F0 !important;
+        }
+
         .block-container {
             padding-top: 1.8rem !important;
             padding-bottom: 3rem !important;
@@ -580,13 +594,11 @@ def render_kpi_grid(metrics: Dict[str, Any]) -> None:
     ]
 
     cards_html = "".join(
-        f"""
-        <div class="kpi-card">
-            <div class="kpi-label">{lbl}</div>
-            <div class="kpi-value">{val}</div>
-            <span class="{cls}">{delta}</span>
-        </div>
-        """
+        f'<div class="kpi-card">'
+        f'<div class="kpi-label">{lbl}</div>'
+        f'<div class="kpi-value">{val}</div>'
+        f'<span class="{cls}">{delta}</span>'
+        f'</div>'
         for lbl, val, delta, cls in cards
     )
     st.markdown(f'<div class="kpi-grid">{cards_html}</div>', unsafe_allow_html=True)
