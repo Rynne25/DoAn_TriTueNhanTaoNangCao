@@ -1,9 +1,10 @@
 # Project 1 — Text Classification of Vietnamese Student Feedback
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=Tr-Hieu205/DoAn_TriTueNhanTaoNangCao&branch=main&mainModule=app/app.py)
+[![GitHub Pages Web Demo](https://img.shields.io/badge/GitHub%20Pages-Live%20Web%20App%20(UIT--VSFC)-06B6D4?logo=github)](https://rynne25.github.io/DoAn_TriTueNhanTaoNangCao/)
 [![GitHub Release Weights](https://img.shields.io/badge/Weights-PhoBERT%20v1.0.0%20(516%20MB)-8B5CF6)](https://github.com/Tr-Hieu205/DoAn_TriTueNhanTaoNangCao/releases/tag/v1.0.0)
 
-**🌐 Web Demo Trực Tuyến (Streamlit Cloud)**: [Mở / Khởi chạy Web App trên Streamlit Cloud](https://share.streamlit.io/deploy?repository=Tr-Hieu205/DoAn_TriTueNhanTaoNangCao&branch=main&mainModule=app/app.py)
+**🌐 Link Web Demo Trực Tuyến (GitHub Pages - Chạy trực tiếp trên trình duyệt)**:
+- **Bản Web chính thức (`Rynne25` GitHub Pages)**: [https://rynne25.github.io/DoAn_TriTueNhanTaoNangCao/](https://rynne25.github.io/DoAn_TriTueNhanTaoNangCao/)
 
 **Team 25**:
 - Lê Văn Hoài Rin (Student ID: 29211332113)
