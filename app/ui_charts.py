@@ -165,36 +165,65 @@ def inject_vibrant_theme() -> None:
             font-weight: 600 !important;
         }
 
-        /* Thanh tiêu đề tối giản (Minimal Project Title Bar) */
+        /* Thanh tiêu đề tối giản (Compact Single-Line Project Title Bar) */
         .top-title-bar {
             position: relative;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 0.65rem;
             background: linear-gradient(135deg, rgba(13, 21, 40, 0.92) 0%, rgba(15, 23, 42, 0.82) 100%);
-            border: 1px solid rgba(34, 211, 238, 0.38);
-            border-radius: 16px;
-            padding: 0.9rem 1.35rem;
-            margin-bottom: 0.65rem;
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 22px rgba(139, 92, 246, 0.15);
-            backdrop-filter: blur(14px);
+            border: 1px solid rgba(34, 211, 238, 0.35);
+            border-radius: 12px;
+            padding: 0.52rem 1rem;
+            margin-bottom: 0.45rem;
+            min-height: 44px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
             overflow: hidden;
         }
         .top-title-bar::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #06B6D4, #8B5CF6, #10B981);
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #06B6D4, #8B5CF6);
+        }
+        .top-title-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.22);
+            border: 1px solid rgba(34, 211, 238, 0.4);
+            font-size: 0.95rem;
+            flex-shrink: 0;
         }
         .top-title-main {
-            font-size: 1.45rem;
-            font-weight: 800;
+            font-size: 1.05rem;
+            font-weight: 700;
             line-height: 1.25;
             margin: 0;
-            background: linear-gradient(90deg, #F8FAFC 0%, #22D3EE 52%, #A855F7 100%);
+            letter-spacing: 0.01em;
+            background: linear-gradient(90deg, #F8FAFC 0%, #22D3EE 60%, #C4B5FD 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .top-title-tag {
+            margin-left: auto;
+            font-size: 0.72rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: #22D3EE;
+            background: rgba(6, 182, 212, 0.14);
+            border: 1px solid rgba(34, 211, 238, 0.35);
+            padding: 0.16rem 0.55rem;
+            border-radius: 999px;
+            flex-shrink: 0;
         }
 
         /* Thiết kế lại Dropdown (Selectbox - cả BaseWeb & React Aria ComboBox) chuẩn Glassmorphic Neon */
@@ -290,6 +319,11 @@ def inject_vibrant_theme() -> None:
             background: linear-gradient(90deg, rgba(6, 182, 212, 0.24), rgba(139, 92, 246, 0.26)) !important;
             color: #22D3EE !important;
             font-weight: 700 !important;
+        }
+
+        /* Ẩn dòng nhắc Ctrl+Enter mặc định vì đã tự động phản hồi thời gian thực */
+        [data-testid="InputInstructions"] {
+            display: none !important;
         }
 
         /* Textarea & Buttons */
@@ -564,19 +598,19 @@ def inject_vibrant_theme() -> None:
 
 
 def render_top_title_bar(lang: str = "vi") -> None:
-    """Hiển thị thanh tiêu đề dự án tối giản, gọn gàng (không có Hero Banner cồng kềnh)."""
+    """Hiển thị thanh tiêu đề dự án gọn 1 dòng (không dùng thẻ h1 để tránh cỡ chữ quá to và icon anchor)."""
     is_en = str(lang).lower() == "en"
     title_text = (
-        "🎓 Vietnamese Student Feedback Multi-Task AI Analyzer (UIT-VSFC)"
+        "Vietnamese Student Feedback Multi-Task AI Analyzer"
         if is_en
-        else "🎓 Hệ thống Phân tích Phản hồi Sinh viên Đa nhiệm (UIT-VSFC)"
+        else "Hệ thống Phân tích Phản hồi Sinh viên Đa nhiệm"
     )
     st.markdown(
-        f"""
-        <div class="top-title-bar">
-            <h1 class="top-title-main">{html.escape(title_text)}</h1>
-        </div>
-        """,
+        f'<div class="top-title-bar">'
+        f'<span class="top-title-icon">🎓</span>'
+        f'<div class="top-title-main">{html.escape(title_text)}</div>'
+        f'<span class="top-title-tag">UIT-VSFC</span>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -1067,31 +1101,32 @@ def make_sentence_multitask_radar_chart(
         if is_en
         else "Radar Xác suất 7 Lớp"
     )
-    _apply_dark_layout(fig, height=295, title=chart_title)
+    _apply_dark_layout(fig, height=320, title=chart_title)
     fig.update_layout(
         polar=dict(
+            domain=dict(x=[0.17, 0.83], y=[0.15, 0.78]),
             bgcolor="rgba(13, 19, 38, 0.55)",
             radialaxis=dict(
                 visible=True,
                 range=[0, 100],
                 gridcolor="rgba(148,163,184,0.18)",
                 ticksuffix="%",
-                tickfont=dict(color="#94A3B8", size=9.5),
+                tickfont=dict(color="#94A3B8", size=9),
             ),
             angularaxis=dict(
                 gridcolor="rgba(148,163,184,0.18)",
-                tickfont=dict(color="#E2E8F0", size=11),
+                tickfont=dict(color="#E2E8F0", size=10.5),
             ),
         ),
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.10,
+            y=-0.06,
             xanchor="center",
             x=0.5,
             font=dict(size=10.5, color="#E2E8F0"),
         ),
-        margin=dict(l=76, r=68, t=44, b=46),
+        margin=dict(l=40, r=40, t=42, b=42),
     )
     return fig
 

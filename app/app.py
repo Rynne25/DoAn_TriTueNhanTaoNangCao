@@ -13,6 +13,7 @@ import time
 from typing import Any, Dict, List, Optional
 
 import streamlit as st
+import streamlit.components.v1 as components
 import torch
 
 APP_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -153,6 +154,225 @@ DEFAULT_CM_TOPIC_BASELINE = [
 ]
 
 
+def inject_realtime_typing_hook() -> None:
+    """Kích hoạt tự động gửi nội dung ô nhập phản hồi theo thời gian thực ngay khi gõ (debounce 320ms, bảo toàn gõ dấu tiếng Việt IME)."""
+    components.html(
+        """
+        <script>
+        (function() {
+            const doc = window.parent.document;
+            function bindRealtimeTextarea() {
+                const areas = doc.querySelectorAll('textarea');
+                areas.forEach((ta) => {
+                    if (ta.dataset.rtBound === '1') return;
+                    ta.dataset.rtBound = '1';
+                    ta.dataset.lastCommitted = ta.value;
+                    let timer = null;
+                    let composing = false;
+
+                    function commitNow() {
+                        if (composing) return;
+                        if (ta.value === ta.dataset.lastCommitted) return;
+                        ta.dataset.lastCommitted = ta.value;
+                        const ev = new KeyboardEvent('keydown', {
+                            key: 'Enter',
+                            code: 'Enter',
+                            keyCode: 13,
+                            which: 13,
+                            ctrlKey: true,
+                            metaKey: true,
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        ta.dispatchEvent(ev);
+                    }
+
+                    ta.addEventListener('compositionstart', () => {
+                        composing = true;
+                        if (timer) clearTimeout(timer);
+                    });
+                    ta.addEventListener('compositionend', () => {
+                        composing = false;
+                        if (timer) clearTimeout(timer);
+                        timer = setTimeout(commitNow, 320);
+                    });
+                    ta.addEventListener('input', () => {
+                        if (composing) return;
+                        if (timer) clearTimeout(timer);
+                        timer = setTimeout(commitNow, 320);
+                    });
+                });
+            }
+            bindRealtimeTextarea();
+            if (!window.parent.__rtObserverBound) {
+                window.parent.__rtObserverBound = true;
+                const obs = new MutationObserver(bindRealtimeTextarea);
+                obs.observe(doc.body, { childList: true, subtree: true });
+            }
+        })();
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
+
+
+@st.fragment
+def render_live_demo_tab(lang: str, baseline_model: Any, phobert_model: Any) -> None:
+    """Hiển thị Tab 1 với cơ chế @st.fragment giúp cập nhật kết quả và biểu đồ tức thời theo thời gian thực khi gõ."""
+    left_col, right_col = st.columns([0.92, 1.68], gap="large")
+
+    with left_col:
+        scenario_idx = st.selectbox(
+            label="🎯 Kịch bản mẫu:" if lang == "vi" else "🎯 Preset Scenario:",
+            options=list(range(len(SCENARIOS))),
+            format_func=lambda i: SCENARIOS[i]["title_vi" if lang == "vi" else "title_en"],
+            index=0,
+            key=f"scenario_selector_{lang}",
+        )
+        active_scenario = SCENARIOS[scenario_idx]
+
+        mode_options = (
+            ["So sánh 2 mô hình", "PhoBERT", "Mô hình Cơ sở"]
+            if lang == "vi"
+            else ["Compare Both", "PhoBERT", "Baseline"]
+        )
+        mode_idx = st.radio(
+            label="⚙️ Mô hình:" if lang == "vi" else "⚙️ Model:",
+            options=[0, 1, 2],
+            format_func=lambda i: mode_options[i],
+            index=0,
+            horizontal=True,
+            key=f"inference_mode_radio_{lang}",
+        )
+
+        text_input = st.text_area(
+            label="✍️ Câu phản hồi (phân tích tức thời khi gõ):" if lang == "vi" else "✍️ Feedback Sentence (real-time as you type):",
+            value=active_scenario["text"],
+            height=84,
+            key=f"feedback_input_{lang}_{scenario_idx}",
+            placeholder=(
+                "Gõ câu phản hồi sinh viên tại đây..."
+                if lang == "vi"
+                else "Type Vietnamese student feedback here..."
+            ),
+        )
+        inject_realtime_typing_hook()
+
+        cleaned = text_input.strip()
+        segmented = segment_text(cleaned) if cleaned else ""
+        if segmented:
+            render_segmented_tokens(segmented, lang=lang)
+
+    with right_col:
+        if not cleaned:
+            st.info("Gõ câu phản hồi hoặc chọn kịch bản ở cột trái để xem phân tích thời gian thực." if lang == "vi" else "Type feedback or select a scenario on the left for real-time analysis.")
+        else:
+            res_p: Optional[Dict[str, Any]] = None
+            res_b: Optional[Dict[str, Any]] = None
+            dt_p = 0.0
+            dt_b = 0.0
+
+            if mode_idx in (0, 1) and phobert_model is not None:
+                t0 = time.perf_counter()
+                res_p = phobert_model.predict(cleaned, word_segment=True)
+                dt_p = time.perf_counter() - t0
+            if mode_idx in (0, 2) and baseline_model is not None:
+                t1 = time.perf_counter()
+                res_b = baseline_model.predict(cleaned, word_segment=True)
+                dt_b = time.perf_counter() - t1
+
+            p_title = "🚀 PhoBERT Đa nhiệm" if lang == "vi" else "🚀 PhoBERT Multi-Task"
+            b_title = "📊 Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "📊 Classical Baseline"
+
+            if mode_idx == 0 and res_p is not None and res_b is not None:
+                fc1, fc2 = st.columns(2)
+                with fc1:
+                    render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
+                with fc2:
+                    render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
+            elif res_p is not None:
+                render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
+            elif res_b is not None:
+                render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
+
+            primary_res = res_p if res_p is not None else res_b
+            compare_res = res_b if (mode_idx == 0 and res_p is not None and res_b is not None) else None
+            primary_name = (
+                ("PhoBERT Đa nhiệm" if lang == "vi" else "PhoBERT Multi-Task")
+                if res_p is not None
+                else ("Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "Classical Baseline")
+            )
+            compare_name = "Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "Classical Baseline"
+
+            if primary_res is not None:
+                pb1, pb2 = st.columns(2)
+                with pb1:
+                    st.plotly_chart(
+                        make_probability_bar_chart(
+                            primary_res["sentiment"]["distribution"],
+                            "Xác suất Cảm xúc (3 Lớp)" if lang == "vi" else "Sentiment Probability (3 Classes)",
+                            accent_color="#8B5CF6",
+                            lang=lang,
+                            compare_distribution=(
+                                compare_res["sentiment"]["distribution"] if compare_res is not None else None
+                            ),
+                            primary_name=primary_name,
+                            compare_name=compare_name,
+                        ),
+                        use_container_width=True,
+                        key="prob_bar_sent",
+                    )
+                with pb2:
+                    st.plotly_chart(
+                        make_probability_bar_chart(
+                            primary_res["topic"]["distribution"],
+                            "Xác suất Chủ đề (4 Lớp)" if lang == "vi" else "Topic Probability (4 Classes)",
+                            accent_color="#06B6D4",
+                            lang=lang,
+                            compare_distribution=(
+                                compare_res["topic"]["distribution"] if compare_res is not None else None
+                            ),
+                            primary_name=primary_name,
+                            compare_name=compare_name,
+                        ),
+                        use_container_width=True,
+                        key="prob_bar_topic",
+                    )
+
+                sent_lbl = str(primary_res["sentiment"]["label"])
+                topic_lbl = str(primary_res["topic"]["label"])
+                sent_id = SENTIMENT_LABELS.index(sent_lbl) if sent_lbl in SENTIMENT_LABELS else 0
+                topic_id = TOPIC_LABELS.index(topic_lbl) if topic_lbl in TOPIC_LABELS else 0
+                token_weights = extract_token_feature_importance(
+                    baseline_model,
+                    segmented,
+                    sent_label_id=sent_id,
+                    topic_label_id=topic_id,
+                    top_k=8,
+                )
+
+                rd1, rd2 = st.columns(2)
+                with rd1:
+                    st.plotly_chart(
+                        make_sentence_multitask_radar_chart(
+                            primary_res,
+                            compare_res=compare_res,
+                            lang=lang,
+                            primary_name=primary_name,
+                            compare_name=compare_name,
+                        ),
+                        use_container_width=True,
+                        key="sentence_radar_7d",
+                    )
+                with rd2:
+                    st.plotly_chart(
+                        make_token_importance_chart(token_weights, lang=lang),
+                        use_container_width=True,
+                        key="sentence_token_importance",
+                    )
+
+
 @st.cache_resource(show_spinner=False)
 def load_models():
     """Nạp và lưu đệm mô hình Cơ sở (TF-IDF) và PhoBERT Đa nhiệm."""
@@ -260,48 +480,89 @@ def render_feature_summary_card(
     accent_color: str,
     lang: str,
 ) -> None:
-    """Hiển thị thanh thông số gọn (Nhãn, Tin cậy Kép, Entropy, Margin, Độ trễ) ít chữ."""
+    """Hiển thị thẻ kết quả dự đoán 2 tầng trực quan có thanh tiến trình Neon phát sáng và chỉ báo độ chắc chắn."""
     feats = compute_prediction_features(result)
-    sent_raw = str(result["sentiment"]["label"])
-    topic_raw = str(result["topic"]["label"])
+    sent_raw = str(result["sentiment"]["label"]).lower()
+    topic_raw = str(result["topic"]["label"]).lower()
     sent_name = format_class_label(sent_raw, lang)
     topic_name = format_class_label(topic_raw, lang)
     sent_color = _badge_color_for_sentiment(sent_raw)
     topic_color = _badge_color_for_topic(topic_raw)
     latency_ms = latency_sec * 1000.0
 
-    lbl_sent = "Cảm xúc" if lang == "vi" else "Sentiment"
-    lbl_topic = "Chủ đề" if lang == "vi" else "Topic"
-    lbl_joint = "Tin cậy Kép" if lang == "vi" else "Joint Conf"
-    lbl_entropy = "Entropy" if lang == "vi" else "Entropy"
-    lbl_margin = "Biên độ" if lang == "vi" else "Margin"
+    sent_conf = min(max(float(feats["sent_conf"]), 0.0), 100.0)
+    topic_conf = min(max(float(feats["topic_conf"]), 0.0), 100.0)
+    joint_conf = min(max(float(feats["joint_conf"]), 0.0), 100.0)
+    avg_margin = (float(feats["sent_margin"]) + float(feats["topic_margin"])) / 2.0
+
+    sent_icon = "😊" if sent_raw == "positive" else ("😡" if sent_raw == "negative" else "😐")
+    topic_icons = {"lecturer": "👨‍🏫", "training_program": "📚", "facility": "🏢", "others": "📌"}
+    topic_icon = topic_icons.get(topic_raw, "📌")
+
+    if joint_conf >= 82.0 and avg_margin >= 50.0:
+        status_color = "#10B981"
+        status_text = "Độ chắc chắn cao" if lang == "vi" else "High Certainty"
+    elif joint_conf >= 62.0:
+        status_color = "#F59E0B"
+        status_text = "Độ chắc chắn vừa" if lang == "vi" else "Moderate Certainty"
+    else:
+        status_color = "#F43F5E"
+        status_text = "Ngữ cảnh phân vân" if lang == "vi" else "Ambiguous Signal"
+
+    lbl_sent = "CẢM XÚC" if lang == "vi" else "SENTIMENT"
+    lbl_topic = "CHỦ ĐỀ" if lang == "vi" else "TOPIC"
+    lbl_joint = "Đồng thuận kép" if lang == "vi" else "Joint Score"
+    lbl_gap = "Cách biệt Top-2" if lang == "vi" else "Top-2 Gap"
 
     st.markdown(
-        f'<div class="bento-card" style="border-top:3px solid {accent_color}; padding:0.75rem 0.95rem; margin-bottom:0.55rem;">'
-        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">'
-        f'<span style="font-size:0.96rem; font-weight:800; color:#F8FAFC;">{html.escape(title)}</span>'
-        f'<span style="background:rgba(15,23,42,0.9); border:1px solid {accent_color}66; color:{accent_color}; '
-        f'padding:0.15rem 0.55rem; border-radius:999px; font-size:0.74rem; font-weight:700; font-family:\'JetBrains Mono\',monospace;">'
-        f'⏱ {latency_ms:.1f} ms</span></div>'
-        f'<div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:0.4rem; text-align:center;">'
-        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid {sent_color}55;">'
-        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_sent}</div>'
-        f'<div style="color:{sent_color}; font-weight:800; font-size:0.78rem;">{html.escape(sent_name)}</div>'
-        f'<div style="color:#F8FAFC; font-size:0.72rem; font-family:\'JetBrains Mono\',monospace;">{feats["sent_conf"]:.1f}%</div></div>'
-        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid {topic_color}55;">'
-        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_topic}</div>'
-        f'<div style="color:{topic_color}; font-weight:800; font-size:0.78rem;">{html.escape(topic_name)}</div>'
-        f'<div style="color:#F8FAFC; font-size:0.72rem; font-family:\'JetBrains Mono\',monospace;">{feats["topic_conf"]:.1f}%</div></div>'
-        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
-        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_joint}</div>'
-        f'<div style="color:#F8FAFC; font-weight:800; font-size:0.86rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.18rem;">{feats["joint_conf"]:.1f}%</div></div>'
-        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
-        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_entropy}</div>'
-        f'<div style="color:#22D3EE; font-weight:700; font-size:0.76rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.2rem;">{feats["sent_entropy"]:.2f}/{feats["topic_entropy"]:.2f}</div></div>'
-        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
-        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_margin}</div>'
-        f'<div style="color:#34D399; font-weight:700; font-size:0.76rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.2rem;">{feats["sent_margin"]:.0f}%/{feats["topic_margin"]:.0f}%</div></div>'
-        f'</div></div>',
+        f'<div class="bento-card" style="border-top:3px solid {accent_color}; padding:0.85rem 1rem; margin-bottom:0.65rem;">'
+        # Header: Model name + latency pill
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem;">'
+        f'<div style="display:flex; align-items:center; gap:0.45rem;">'
+        f'<span style="width:9px; height:9px; border-radius:50%; background:{accent_color}; box-shadow:0 0 10px {accent_color}; display:inline-block;"></span>'
+        f'<span style="font-size:0.98rem; font-weight:800; color:#F8FAFC;">{html.escape(title)}</span>'
+        f'</div>'
+        f'<span style="background:rgba(15,23,42,0.92); border:1px solid {accent_color}55; color:{accent_color}; '
+        f'padding:0.16rem 0.58rem; border-radius:999px; font-size:0.73rem; font-weight:700; font-family:\'JetBrains Mono\',monospace;">'
+        f'⚡ {latency_ms:.1f} ms</span>'
+        f'</div>'
+        # Tier 1: 2 Large Visual Task Cards with Neon Progress Bars
+        f'<div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:0.6rem; margin-bottom:0.6rem;">'
+        # Sentiment Block
+        f'<div style="background:rgba(7,9,19,0.72); border:1px solid {sent_color}44; border-radius:12px; padding:0.6rem 0.75rem;">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.28rem;">'
+        f'<span style="font-size:0.68rem; font-weight:700; color:#94A3B8; letter-spacing:0.04em;">{sent_icon} {lbl_sent}</span>'
+        f'<span style="font-size:1.02rem; font-weight:800; color:#F8FAFC; font-family:\'JetBrains Mono\',monospace;">{sent_conf:.1f}%</span>'
+        f'</div>'
+        f'<div style="font-size:0.92rem; font-weight:800; color:{sent_color}; margin-bottom:0.42rem;">{html.escape(sent_name)}</div>'
+        f'<div style="width:100%; height:7px; background:rgba(30,41,59,0.85); border-radius:999px; overflow:hidden;">'
+        f'<div style="width:{sent_conf:.1f}%; height:100%; background:linear-gradient(90deg, {sent_color}aa, {sent_color}); '
+        f'border-radius:999px; box-shadow:0 0 10px {sent_color};"></div>'
+        f'</div>'
+        f'</div>'
+        # Topic Block
+        f'<div style="background:rgba(7,9,19,0.72); border:1px solid {topic_color}44; border-radius:12px; padding:0.6rem 0.75rem;">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.28rem;">'
+        f'<span style="font-size:0.68rem; font-weight:700; color:#94A3B8; letter-spacing:0.04em;">{topic_icon} {lbl_topic}</span>'
+        f'<span style="font-size:1.02rem; font-weight:800; color:#F8FAFC; font-family:\'JetBrains Mono\',monospace;">{topic_conf:.1f}%</span>'
+        f'</div>'
+        f'<div style="font-size:0.92rem; font-weight:800; color:{topic_color}; margin-bottom:0.42rem;">{html.escape(topic_name)}</div>'
+        f'<div style="width:100%; height:7px; background:rgba(30,41,59,0.85); border-radius:999px; overflow:hidden;">'
+        f'<div style="width:{topic_conf:.1f}%; height:100%; background:linear-gradient(90deg, {topic_color}aa, {topic_color}); '
+        f'border-radius:999px; box-shadow:0 0 10px {topic_color};"></div>'
+        f'</div>'
+        f'</div>'
+        f'</div>'
+        # Tier 2: Smart Status Strip
+        f'<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; '
+        f'background:rgba(15,23,42,0.65); border:1px solid rgba(148,163,184,0.16); border-radius:10px; padding:0.36rem 0.65rem; font-size:0.74rem;">'
+        f'<span style="display:inline-flex; align-items:center; gap:0.35rem; color:{status_color}; font-weight:700;">'
+        f'<span style="width:7px; height:7px; border-radius:50%; background:{status_color}; box-shadow:0 0 8px {status_color};"></span>'
+        f'{status_text}</span>'
+        f'<span style="color:#CBD5E1;">{lbl_joint}: <b style="color:#22D3EE; font-family:\'JetBrains Mono\',monospace;">{joint_conf:.1f}%</b></span>'
+        f'<span style="color:#CBD5E1;">{lbl_gap}: <b style="color:#34D399; font-family:\'JetBrains Mono\',monospace;">+{avg_margin:.0f}%</b></span>'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -450,16 +711,17 @@ def main() -> None:
     inject_vibrant_theme()
     st.session_state.setdefault("lang", "vi")
 
-    # ── THANH TIÊU ĐỀ TỐI GIẢN & CHUYỂN ĐỔI NGÔN NGỮ ─────────────────────────
-    hdr_col, lang_col = st.columns([5.2, 1.3], vertical_alignment="center")
+    # ── THANH TIÊU ĐỀ GỌN 1 DÒNG & 1 NÚT ICON CHUYỂN NGÔN NGỮ ───────────────
+    hdr_col, lang_col = st.columns([13.2, 0.8], vertical_alignment="center")
     with lang_col:
-        b_vi, b_en = st.columns(2, gap="small")
-        with b_vi:
-            if st.button("🇻🇳 Tiếng Việt", key="btn_lang_vi", use_container_width=True):
-                st.session_state["lang"] = "vi"
-        with b_en:
-            if st.button("🇬🇧 English", key="btn_lang_en", use_container_width=True):
-                st.session_state["lang"] = "en"
+        tooltip_lang = (
+            "Chuyển sang Tiếng Anh (Switch to English)"
+            if st.session_state["lang"] == "vi"
+            else "Switch to Vietnamese (Chuyển sang Tiếng Việt)"
+        )
+        if st.button("🌐", key="btn_lang_toggle", help=tooltip_lang, use_container_width=True):
+            st.session_state["lang"] = "en" if st.session_state["lang"] == "vi" else "vi"
+            st.rerun()
 
     lang: str = st.session_state["lang"]
     with hdr_col:
@@ -473,161 +735,10 @@ def main() -> None:
     tab_demo, tab_metrics = st.tabs([tab1_label, tab2_label])
 
     # ══════════════════════════════════════════════════════════════════════════
-    # TAB 1: DEMO PHÂN TÍCH PHẢN HỒI TRỰC TIẾP (2 CỘT TRÁI - PHẢI)
+    # TAB 1: DEMO PHÂN TÍCH PHẢN HỒI TRỰC TIẾP (2 CỘT TRÁI - PHẢI, REAL-TIME)
     # ══════════════════════════════════════════════════════════════════════════
     with tab_demo:
-        left_col, right_col = st.columns([0.92, 1.68], gap="large")
-
-        with left_col:
-            scenario_idx = st.selectbox(
-                label="🎯 Kịch bản mẫu:" if lang == "vi" else "🎯 Preset Scenario:",
-                options=list(range(len(SCENARIOS))),
-                format_func=lambda i: SCENARIOS[i]["title_vi" if lang == "vi" else "title_en"],
-                index=0,
-                key=f"scenario_selector_{lang}",
-            )
-            active_scenario = SCENARIOS[scenario_idx]
-
-            mode_options = (
-                ["So sánh 2 mô hình", "PhoBERT", "Mô hình Cơ sở"]
-                if lang == "vi"
-                else ["Compare Both", "PhoBERT", "Baseline"]
-            )
-            mode_idx = st.radio(
-                label="⚙️ Mô hình:" if lang == "vi" else "⚙️ Model:",
-                options=[0, 1, 2],
-                format_func=lambda i: mode_options[i],
-                index=0,
-                horizontal=True,
-                key=f"inference_mode_radio_{lang}",
-            )
-
-            text_input = st.text_area(
-                label="✍️ Câu phản hồi:" if lang == "vi" else "✍️ Feedback Sentence:",
-                value=active_scenario["text"],
-                height=84,
-                placeholder=(
-                    "Nhập câu phản hồi sinh viên..."
-                    if lang == "vi"
-                    else "Enter Vietnamese student feedback..."
-                ),
-            )
-
-            cleaned = text_input.strip()
-            segmented = segment_text(cleaned) if cleaned else ""
-            if segmented:
-                render_segmented_tokens(segmented, lang=lang)
-
-        with right_col:
-            if not cleaned:
-                st.info("Chọn kịch bản hoặc nhập câu phản hồi ở cột trái." if lang == "vi" else "Select a scenario or enter feedback on the left.")
-            else:
-                res_p: Optional[Dict[str, Any]] = None
-                res_b: Optional[Dict[str, Any]] = None
-                dt_p = 0.0
-                dt_b = 0.0
-
-                if mode_idx in (0, 1) and phobert_model is not None:
-                    t0 = time.perf_counter()
-                    res_p = phobert_model.predict(cleaned, word_segment=True)
-                    dt_p = time.perf_counter() - t0
-                if mode_idx in (0, 2) and baseline_model is not None:
-                    t1 = time.perf_counter()
-                    res_b = baseline_model.predict(cleaned, word_segment=True)
-                    dt_b = time.perf_counter() - t1
-
-                p_title = "🚀 PhoBERT Đa nhiệm" if lang == "vi" else "🚀 PhoBERT Multi-Task"
-                b_title = "📊 Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "📊 Classical Baseline"
-
-                # 1. Thanh thông số gọn (5 ô số liệu trực quan, không chữ thừa)
-                if mode_idx == 0 and res_p is not None and res_b is not None:
-                    fc1, fc2 = st.columns(2)
-                    with fc1:
-                        render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
-                    with fc2:
-                        render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
-                elif res_p is not None:
-                    render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
-                elif res_b is not None:
-                    render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
-
-                primary_res = res_p if res_p is not None else res_b
-                compare_res = res_b if (mode_idx == 0 and res_p is not None and res_b is not None) else None
-                primary_name = (
-                    ("PhoBERT Đa nhiệm" if lang == "vi" else "PhoBERT Multi-Task")
-                    if res_p is not None
-                    else ("Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "Classical Baseline")
-                )
-                compare_name = "Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "Classical Baseline"
-
-                if primary_res is not None:
-                    # Hàng biểu đồ 1: Phân phối xác suất Cảm xúc (3 lớp) & Chủ đề (4 lớp)
-                    pb1, pb2 = st.columns(2)
-                    with pb1:
-                        st.plotly_chart(
-                            make_probability_bar_chart(
-                                primary_res["sentiment"]["distribution"],
-                                "Xác suất Cảm xúc (3 Lớp)" if lang == "vi" else "Sentiment Probability (3 Classes)",
-                                accent_color="#8B5CF6",
-                                lang=lang,
-                                compare_distribution=(
-                                    compare_res["sentiment"]["distribution"] if compare_res is not None else None
-                                ),
-                                primary_name=primary_name,
-                                compare_name=compare_name,
-                            ),
-                            use_container_width=True,
-                            key="prob_bar_sent",
-                        )
-                    with pb2:
-                        st.plotly_chart(
-                            make_probability_bar_chart(
-                                primary_res["topic"]["distribution"],
-                                "Xác suất Chủ đề (4 Lớp)" if lang == "vi" else "Topic Probability (4 Classes)",
-                                accent_color="#06B6D4",
-                                lang=lang,
-                                compare_distribution=(
-                                    compare_res["topic"]["distribution"] if compare_res is not None else None
-                                ),
-                                primary_name=primary_name,
-                                compare_name=compare_name,
-                            ),
-                            use_container_width=True,
-                            key="prob_bar_topic",
-                        )
-
-                    # 4. Hàng biểu đồ 3: Radar Đa nhiệm 7 lớp & Trọng số Từ khóa Đặc trưng
-                    sent_lbl = str(primary_res["sentiment"]["label"])
-                    topic_lbl = str(primary_res["topic"]["label"])
-                    sent_id = SENTIMENT_LABELS.index(sent_lbl) if sent_lbl in SENTIMENT_LABELS else 0
-                    topic_id = TOPIC_LABELS.index(topic_lbl) if topic_lbl in TOPIC_LABELS else 0
-                    token_weights = extract_token_feature_importance(
-                        baseline_model,
-                        segmented,
-                        sent_label_id=sent_id,
-                        topic_label_id=topic_id,
-                        top_k=8,
-                    )
-
-                    rd1, rd2 = st.columns(2)
-                    with rd1:
-                        st.plotly_chart(
-                            make_sentence_multitask_radar_chart(
-                                primary_res,
-                                compare_res=compare_res,
-                                lang=lang,
-                                primary_name=primary_name,
-                                compare_name=compare_name,
-                            ),
-                            use_container_width=True,
-                            key="sentence_radar_7d",
-                        )
-                    with rd2:
-                        st.plotly_chart(
-                            make_token_importance_chart(token_weights, lang=lang),
-                            use_container_width=True,
-                            key="sentence_token_importance",
-                        )
+        render_live_demo_tab(lang, baseline_model, phobert_model)
 
     # ══════════════════════════════════════════════════════════════════════════
     # TAB 2: THÔNG SỐ HUẤN LUYỆN & ĐÁNH GIÁ MÔ HÌNH TRÊN TẬP UIT-VSFC
