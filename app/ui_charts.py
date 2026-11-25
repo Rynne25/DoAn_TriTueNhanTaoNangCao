@@ -674,15 +674,11 @@ def render_segmented_tokens(segmented_text: str, lang: str = "vi") -> None:
     char_count = len(segmented_text.replace("_", " ").strip())
     compound_density = (compound_count / total_tokens) * 100.0 if total_tokens > 0 else 0.0
 
-    hdr_title = (
-        "🧩 Vietnamese Word Segmentation Anatomy (PyVi)"
-        if is_en
-        else "🧩 Giải phẫu Tách từ Tiếng Việt (PyVi)"
-    )
-    m1_lbl = "Total Tokens" if is_en else "Tổng số từ"
-    m2_lbl = "Compound (_)" if is_en else "Từ ghép (_)"
-    m3_lbl = "Characters" if is_en else "Số ký tự"
-    m4_lbl = "Compound Ratio" if is_en else "Mật độ từ ghép"
+    hdr_title = "🧩 Tách từ PyVi" if not is_en else "🧩 PyVi Tokens"
+    m1_lbl = "Tokens" if is_en else "Số từ"
+    m2_lbl = "Compound" if is_en else "Từ ghép"
+    m3_lbl = "Chars" if is_en else "Ký tự"
+    m4_lbl = "Ratio" if is_en else "Tỷ lệ ghép"
 
     chips_html = "".join(
         f'<span class="token-chip {"compound" if "_" in tok else ""}">{html.escape(tok)}</span>'
@@ -959,18 +955,18 @@ def make_probability_bar_chart(
                 hovertemplate=f"<b>%{{y}}</b><br>{c_name}: %{{x:.2f}}%<extra></extra>",
             )
         )
-        _apply_dark_layout(fig, height=255, title=title)
+        _apply_dark_layout(fig, height=250, title=title)
         fig.update_layout(
             barmode="group",
             legend=dict(
                 orientation="h",
-                yanchor="bottom",
-                y=1.01,
-                xanchor="right",
-                x=1.0,
+                yanchor="top",
+                y=-0.14,
+                xanchor="center",
+                x=0.5,
                 font=dict(size=10.5, color="#E2E8F0"),
             ),
-            margin=dict(l=18, r=22, t=54 if title else 32, b=18),
+            margin=dict(l=16, r=20, t=42 if title else 24, b=46),
             xaxis=dict(range=[0, 108], showgrid=True, gridcolor="rgba(148,163,184,0.14)", ticksuffix="%"),
             yaxis=dict(autorange="reversed", showgrid=False),
         )
@@ -1058,11 +1054,11 @@ def make_sentence_multitask_radar_chart(
     )
 
     chart_title = (
-        "7-Class Multi-Task Sentence Probability Profile"
+        "7-Class Probability Radar"
         if is_en
-        else "Hồ sơ Xác suất Đa nhiệm 7 Lớp của Câu"
+        else "Radar Xác suất 7 Lớp"
     )
-    _apply_dark_layout(fig, height=300, title=chart_title)
+    _apply_dark_layout(fig, height=295, title=chart_title)
     fig.update_layout(
         polar=dict(
             bgcolor="rgba(13, 19, 38, 0.55)",
@@ -1080,13 +1076,13 @@ def make_sentence_multitask_radar_chart(
         ),
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1.0,
+            yanchor="top",
+            y=-0.10,
+            xanchor="center",
+            x=0.5,
             font=dict(size=10.5, color="#E2E8F0"),
         ),
-        margin=dict(l=80, r=70, t=58, b=28),
+        margin=dict(l=76, r=68, t=44, b=46),
     )
     return fig
 
@@ -1103,17 +1099,12 @@ def make_token_importance_chart(
     sent_w = [float(it.get("sent_weight", 0.0)) for it in items]
     topic_w = [float(it.get("topic_weight", 0.0)) for it in items]
 
-    sent_trace_name = "Sentiment Impact" if is_en else "Tác động Cảm xúc"
-    topic_trace_name = "Topic Impact" if is_en else "Tác động Chủ đề"
+    sent_trace_name = "Sentiment" if is_en else "Cảm xúc"
+    topic_trace_name = "Topic" if is_en else "Chủ đề"
     chart_title = (
-        "Token & N-gram Feature Attribution Scores"
+        "Keyword Feature Attribution (TF-IDF × Coef)"
         if is_en
-        else "Trọng số Đóng góp Đặc trưng Từ khóa & N-gram"
-    )
-    x_axis_title = (
-        "Attribution Score (TF-IDF × Coef)"
-        if is_en
-        else "Điểm đóng góp đặc trưng (TF-IDF × Hệ số)"
+        else "Trọng số Từ khóa Đặc trưng (TF-IDF × Hệ số)"
     )
 
     fig = go.Figure()
@@ -1144,26 +1135,25 @@ def make_token_importance_chart(
         )
     )
 
-    _apply_dark_layout(fig, height=300, title=chart_title)
+    _apply_dark_layout(fig, height=295, title=chart_title)
     fig.update_layout(
         barmode="group",
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.01,
-            xanchor="right",
-            x=1.0,
+            yanchor="top",
+            y=-0.12,
+            xanchor="center",
+            x=0.5,
             font=dict(size=10.5, color="#E2E8F0"),
         ),
         xaxis=dict(
-            title=x_axis_title,
             showgrid=True,
             gridcolor="rgba(148,163,184,0.14)",
             zeroline=True,
             zerolinecolor="rgba(248,250,252,0.35)",
         ),
         yaxis=dict(autorange="reversed", showgrid=False),
-        margin=dict(l=22, r=20, t=54, b=32),
+        margin=dict(l=22, r=20, t=44, b=46),
     )
     return fig
 

@@ -83,102 +83,57 @@ METRICS_PATH = os.path.join(PROJECT_ROOT, "results", "metrics.json")
 SCENARIOS: List[Dict[str, str]] = [
     {
         "id": "01",
-        "title_vi": "01 · Giảng viên - Tích cực: Giảng dạy nhiệt tình, giải đáp chi tiết",
-        "title_en": "01 · Lecturer - Positive: Enthusiastic teaching & detailed guidance",
+        "title_vi": "01 · Giảng viên (Tích cực) — Giảng dạy nhiệt tình",
+        "title_en": "01 · Lecturer (Positive) — Enthusiastic teaching",
         "text": "Thầy cô giảng dạy rất nhiệt tình, giải đáp thắc mắc chi tiết và hỗ trợ sinh viên hết mình.",
-        "en_translation": "The lecturer teaches very enthusiastically, answers questions in detail, and supports students wholeheartedly.",
-        "expected_sent": "positive",
-        "expected_topic": "lecturer",
-        "difficulty_vi": "Rõ ràng · Từ khóa cảm xúc trực tiếp",
-        "difficulty_en": "Explicit · Direct sentiment lexical cues",
     },
     {
         "id": "02",
-        "title_vi": "02 · Giảng viên - Tiêu cực: Vào lớp trễ, giảng bài quá nhanh",
-        "title_en": "02 · Lecturer - Negative: Late arrival & rushed lecture pace",
+        "title_vi": "02 · Giảng viên (Tiêu cực) — Vào trễ, dạy nhanh",
+        "title_en": "02 · Lecturer (Negative) — Late & rushed lecture",
         "text": "Giảng viên vào lớp trễ, giảng bài quá nhanh và không hướng dẫn sinh viên làm bài tập.",
-        "en_translation": "The lecturer arrives late to class, lectures too fast, and does not guide students on exercises.",
-        "expected_sent": "negative",
-        "expected_topic": "lecturer",
-        "difficulty_vi": "Rõ ràng · Phê bình phương pháp giảng dạy",
-        "difficulty_en": "Explicit · Direct pedagogical criticism",
     },
     {
         "id": "03",
-        "title_vi": "03 · Cơ sở vật chất - Tích cực: Phòng học khang trang, thiết bị sắc nét",
-        "title_en": "03 · Facility - Positive: Modern classroom & sharp projector",
+        "title_vi": "03 · Cơ sở vật chất (Tích cực) — Phòng tốt, máy lạnh êm",
+        "title_en": "03 · Facility (Positive) — Modern room & cool AC",
         "text": "Phòng học khang trang, máy lạnh chạy êm và máy chiếu phục vụ thuyết trình rất sắc nét.",
-        "en_translation": "The classroom is spacious, the air conditioner runs smoothly, and the presentation projector is very sharp.",
-        "expected_sent": "positive",
-        "expected_topic": "facility",
-        "difficulty_vi": "Rõ ràng · Đa thực thể trang thiết bị",
-        "difficulty_en": "Explicit · Multi-entity classroom equipment",
     },
     {
         "id": "04",
-        "title_vi": "04 · Cơ sở vật chất - Tiêu cực: Phòng nóng bức, máy lạnh hỏng, rớt mạng",
-        "title_en": "04 · Facility - Negative: Hot room, broken AC & unstable network",
+        "title_vi": "04 · Cơ sở vật chất (Tiêu cực) — Phòng nóng, rớt mạng",
+        "title_en": "04 · Facility (Negative) — Hot room & broken AC",
         "text": "Phòng học quá nóng bức, máy lạnh bị hỏng và kết nối wifi liên tục bị rớt mạng.",
-        "en_translation": "The classroom is too hot, the air conditioner is broken, and the wireless connection keeps dropping.",
-        "expected_sent": "negative",
-        "expected_topic": "facility",
-        "difficulty_vi": "Rõ ràng · Phàn nàn hạ tầng phòng học",
-        "difficulty_en": "Explicit · Infrastructure complaint",
     },
     {
         "id": "05",
-        "title_vi": "05 · Chương trình đào tạo - Tích cực: Nội dung thực tế, nâng cao kỹ năng",
-        "title_en": "05 · Training Program - Positive: Practical course & career skills",
+        "title_vi": "05 · Chương trình ĐT (Tích cực) — Thực tế, hữu ích",
+        "title_en": "05 · Curriculum (Positive) — Practical career skills",
         "text": "Nội dung môn học rất thực tế, bài tập lớn giúp nâng cao kỹ năng nghề nghiệp rõ rệt.",
-        "en_translation": "The course content is very practical, and the major project significantly improves professional skills.",
-        "expected_sent": "positive",
-        "expected_topic": "training_program",
-        "difficulty_vi": "Trung bình · Ngữ cảnh học thuật & kỹ năng",
-        "difficulty_en": "Medium · Curriculum & skill development",
     },
     {
         "id": "06",
-        "title_vi": "06 · Chương trình đào tạo - Tiêu cực: Lịch thi dày đặc, nặng lý thuyết",
-        "title_en": "06 · Training Program - Negative: Dense exam schedule & heavy theory",
+        "title_vi": "06 · Chương trình ĐT (Tiêu cực) — Thi dày, nặng lý thuyết",
+        "title_en": "06 · Curriculum (Negative) — Dense exams & heavy theory",
         "text": "Lịch thi bố trí quá dày đặc và chương trình học quá nặng về lý thuyết hàn lâm.",
-        "en_translation": "The exam schedule is arranged too densely and the curriculum is overly heavy on academic theory.",
-        "expected_sent": "negative",
-        "expected_topic": "training_program",
-        "difficulty_vi": "Trung bình · Đánh giá cấu trúc học phần",
-        "difficulty_en": "Medium · Course workload & schedule critique",
     },
     {
         "id": "07",
-        "title_vi": "07 · Chủ đề khác - Trung tính: Thông báo học phí & mở cổng đăng ký môn",
-        "title_en": "07 · Others - Neutral: Tuition deadline & registration portal notice",
+        "title_vi": "07 · Chủ đề khác (Trung tính) — Thông báo học phí",
+        "title_en": "07 · Others (Neutral) — Tuition & registration notice",
         "text": "Nhà trường đã thông báo thời hạn đóng học phí và mở cổng đăng ký môn học học kỳ mới.",
-        "en_translation": "The university announced the tuition payment deadline and opened the course registration portal for the new semester.",
-        "expected_sent": "neutral",
-        "expected_topic": "others",
-        "difficulty_vi": "Lớp hiếm · Câu thông báo hành chính khách quan",
-        "difficulty_en": "Minority Class · Objective administrative notice",
     },
     {
         "id": "08",
-        "title_vi": "08 · Ngữ cảnh Ẩn ý & Mỉa mai: Trải nghiệm phòng học xông hơi giữa trưa",
-        "title_en": "08 · Sarcasm & Implicit Context: 'Sauna classroom' under midday sun",
+        "title_vi": "08 · Mỉa mai / Ẩn ý — Phòng học xông hơi giữa trưa",
+        "title_en": "08 · Sarcasm / Irony — Midday sauna classroom",
         "text": "Cảm ơn nhà trường đã tạo cơ hội cho sinh viên trải nghiệm phòng học xông hơi giữa trưa nắng.",
-        "en_translation": "Thank the university for giving students the opportunity to experience a sauna classroom under the midday sun.",
-        "expected_sent": "negative",
-        "expected_topic": "facility",
-        "difficulty_vi": "Thách thức cao · Từ bề mặt khen ngợi mang hàm ý chê trách",
-        "difficulty_en": "High Difficulty · Positive surface words conveying negative irony",
     },
     {
         "id": "09",
-        "title_vi": "09 · Tự nhập phản hồi mới: Nhập văn bản tùy chỉnh để kiểm thử",
-        "title_en": "09 · Custom Feedback Input: Enter your own sentence for analysis",
+        "title_vi": "09 · Tự nhập câu phản hồi mới",
+        "title_en": "09 · Custom feedback input",
         "text": "",
-        "en_translation": "Custom Vietnamese student feedback entered directly by the user.",
-        "expected_sent": "",
-        "expected_topic": "",
-        "difficulty_vi": "Tùy chỉnh · Kiểm thử tự do thời gian thực",
-        "difficulty_en": "Custom · Free-form real-time evaluation",
     },
 ]
 
@@ -298,71 +253,14 @@ def _format_pair_label(raw_pair: str, lang: str) -> str:
     return " · ".join(format_class_label(p, lang) for p in parts)
 
 
-def render_scenario_metadata_box(scenario: Dict[str, str], lang: str) -> None:
-    """Hiển thị hộp thông tin ngữ cảnh kịch bản (nhãn kỳ vọng, độ khó và bản dịch tiếng Anh khi ở chế độ EN)."""
-    exp_sent = scenario.get("expected_sent", "")
-    exp_topic = scenario.get("expected_topic", "")
-    diff_text = scenario.get("difficulty_vi" if lang == "vi" else "difficulty_en", "")
-
-    if exp_sent and exp_topic:
-        sent_color = _badge_color_for_sentiment(exp_sent)
-        topic_color = _badge_color_for_topic(exp_topic)
-        sent_name = format_class_label(exp_sent, lang)
-        topic_name = format_class_label(exp_topic, lang)
-        sent_prefix = "Cảm xúc kỳ vọng" if lang == "vi" else "Expected Sentiment"
-        topic_prefix = "Chủ đề kỳ vọng" if lang == "vi" else "Expected Topic"
-        badges_html = (
-            f'<span style="background:{sent_color}22; border:1px solid {sent_color}; color:{sent_color}; '
-            f'padding:0.22rem 0.65rem; border-radius:999px; font-size:0.76rem; font-weight:700;">'
-            f'{sent_prefix}: {html.escape(sent_name)}</span>'
-            f'<span style="background:{topic_color}22; border:1px solid {topic_color}; color:{topic_color}; '
-            f'padding:0.22rem 0.65rem; border-radius:999px; font-size:0.76rem; font-weight:700;">'
-            f'{topic_prefix}: {html.escape(topic_name)}</span>'
-        )
-    else:
-        custom_lbl = "Chế độ nhập tự do" if lang == "vi" else "Custom User Input Mode"
-        badges_html = (
-            f'<span style="background:rgba(34,211,238,0.16); border:1px solid #22D3EE; color:#22D3EE; '
-            f'padding:0.22rem 0.65rem; border-radius:999px; font-size:0.76rem; font-weight:700;">'
-            f'{custom_lbl}</span>'
-        )
-
-    diff_prefix = "Đặc trưng ngôn ngữ" if lang == "vi" else "Linguistic Profile"
-    trans_html = ""
-    if lang == "en" and scenario.get("en_translation"):
-        trans_html = (
-            f'<div style="margin-top:0.55rem; padding-top:0.45rem; border-top:1px solid rgba(148,163,184,0.18); '
-            f'font-size:0.8rem; color:#CBD5E1;">'
-            f'<b>English Meaning:</b> <i>“{html.escape(scenario["en_translation"])}”</i></div>'
-        )
-
-    st.markdown(
-        f"""
-        <div style="background:rgba(13,21,40,0.82); border:1px solid rgba(34,211,238,0.32);
-                    border-radius:12px; padding:0.75rem 0.95rem; margin:0.35rem 0 0.85rem 0;">
-            <div style="display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center;">
-                {badges_html}
-                <span style="background:rgba(139,92,246,0.18); border:1px solid rgba(168,85,247,0.45); color:#C4B5FD;
-                             padding:0.22rem 0.65rem; border-radius:999px; font-size:0.75rem; font-weight:600;">
-                    {diff_prefix}: {html.escape(diff_text)}
-                </span>
-            </div>
-            {trans_html}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
 def render_feature_summary_card(
     title: str,
-    arch_tag: str,
     result: Dict[str, Any],
     latency_sec: float,
     accent_color: str,
     lang: str,
 ) -> None:
-    """Hiển thị thẻ thông số dự đoán, độ trễ, độ bất định Shannon Entropy và biên độ quyết định."""
+    """Hiển thị thanh thông số gọn (Nhãn, Tin cậy Kép, Entropy, Margin, Độ trễ) ít chữ."""
     feats = compute_prediction_features(result)
     sent_raw = str(result["sentiment"]["label"])
     topic_raw = str(result["topic"]["label"])
@@ -374,51 +272,36 @@ def render_feature_summary_card(
 
     lbl_sent = "Cảm xúc" if lang == "vi" else "Sentiment"
     lbl_topic = "Chủ đề" if lang == "vi" else "Topic"
-    lbl_latency = "Độ trễ" if lang == "vi" else "Latency"
-    lbl_joint = "Tin cậy Kép" if lang == "vi" else "Joint Conf."
-    lbl_entropy = "Độ bất định (Cảm xúc / Chủ đề)" if lang == "vi" else "Shannon Entropy (Sent / Topic)"
-    lbl_margin = "Biên độ Top-1 vs Top-2" if lang == "vi" else "Top-1 vs Top-2 Margin"
-    unit_bits = "bit" if lang == "vi" else "bits"
+    lbl_joint = "Tin cậy Kép" if lang == "vi" else "Joint Conf"
+    lbl_entropy = "Entropy" if lang == "vi" else "Entropy"
+    lbl_margin = "Biên độ" if lang == "vi" else "Margin"
 
     st.markdown(
-        f"""
-        <div class="bento-card" style="border-top:3px solid {accent_color}; padding:0.95rem 1.1rem; margin-bottom:0.75rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
-                <div>
-                    <div style="font-size:1.04rem; font-weight:800; color:#F8FAFC;">{html.escape(title)}</div>
-                    <div style="font-size:0.76rem; color:#94A3B8;">{html.escape(arch_tag)}</div>
-                </div>
-                <span style="background:rgba(15,23,42,0.9); border:1px solid {accent_color}66; color:{accent_color};
-                             padding:0.2rem 0.6rem; border-radius:999px; font-size:0.75rem; font-weight:700;">
-                    ⏱ {lbl_latency}: {latency_ms:.1f} ms
-                </span>
-            </div>
-            <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.65rem 0;">
-                <span style="background:{sent_color}22; border:1px solid {sent_color}; color:{sent_color};
-                             padding:0.25rem 0.7rem; border-radius:999px; font-size:0.8rem; font-weight:700;">
-                    {lbl_sent}: {html.escape(sent_name)} ({feats['sent_conf']:.1f}%)
-                </span>
-                <span style="background:{topic_color}22; border:1px solid {topic_color}; color:{topic_color};
-                             padding:0.25rem 0.7rem; border-radius:999px; font-size:0.8rem; font-weight:700;">
-                    {lbl_topic}: {html.escape(topic_name)} ({feats['topic_conf']:.1f}%)
-                </span>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:0.45rem; font-size:0.75rem;">
-                <div style="background:rgba(7,9,19,0.65); padding:0.4rem 0.55rem; border-radius:8px; border:1px solid rgba(148,163,184,0.18);">
-                    <div style="color:#94A3B8; font-size:0.68rem;">{lbl_joint}</div>
-                    <div style="color:#F8FAFC; font-weight:700; font-family:'JetBrains Mono',monospace;">{feats['joint_conf']:.1f}%</div>
-                </div>
-                <div style="background:rgba(7,9,19,0.65); padding:0.4rem 0.55rem; border-radius:8px; border:1px solid rgba(148,163,184,0.18);">
-                    <div style="color:#94A3B8; font-size:0.68rem;">{lbl_entropy}</div>
-                    <div style="color:#22D3EE; font-weight:700; font-family:'JetBrains Mono',monospace;">{feats['sent_entropy']:.2f} / {feats['topic_entropy']:.2f} {unit_bits}</div>
-                </div>
-                <div style="background:rgba(7,9,19,0.65); padding:0.4rem 0.55rem; border-radius:8px; border:1px solid rgba(148,163,184,0.18);">
-                    <div style="color:#94A3B8; font-size:0.68rem;">{lbl_margin}</div>
-                    <div style="color:#34D399; font-weight:700; font-family:'JetBrains Mono',monospace;">{feats['sent_margin']:.1f}% / {feats['topic_margin']:.1f}%</div>
-                </div>
-            </div>
-        </div>
-        """,
+        f'<div class="bento-card" style="border-top:3px solid {accent_color}; padding:0.75rem 0.95rem; margin-bottom:0.55rem;">'
+        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">'
+        f'<span style="font-size:0.96rem; font-weight:800; color:#F8FAFC;">{html.escape(title)}</span>'
+        f'<span style="background:rgba(15,23,42,0.9); border:1px solid {accent_color}66; color:{accent_color}; '
+        f'padding:0.15rem 0.55rem; border-radius:999px; font-size:0.74rem; font-weight:700; font-family:\'JetBrains Mono\',monospace;">'
+        f'⏱ {latency_ms:.1f} ms</span></div>'
+        f'<div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:0.4rem; text-align:center;">'
+        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid {sent_color}55;">'
+        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_sent}</div>'
+        f'<div style="color:{sent_color}; font-weight:800; font-size:0.78rem;">{html.escape(sent_name)}</div>'
+        f'<div style="color:#F8FAFC; font-size:0.72rem; font-family:\'JetBrains Mono\',monospace;">{feats["sent_conf"]:.1f}%</div></div>'
+        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid {topic_color}55;">'
+        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_topic}</div>'
+        f'<div style="color:{topic_color}; font-weight:800; font-size:0.78rem;">{html.escape(topic_name)}</div>'
+        f'<div style="color:#F8FAFC; font-size:0.72rem; font-family:\'JetBrains Mono\',monospace;">{feats["topic_conf"]:.1f}%</div></div>'
+        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
+        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_joint}</div>'
+        f'<div style="color:#F8FAFC; font-weight:800; font-size:0.86rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.18rem;">{feats["joint_conf"]:.1f}%</div></div>'
+        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
+        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_entropy}</div>'
+        f'<div style="color:#22D3EE; font-weight:700; font-size:0.76rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.2rem;">{feats["sent_entropy"]:.2f}/{feats["topic_entropy"]:.2f}</div></div>'
+        f'<div style="background:rgba(7,9,19,0.65); padding:0.35rem 0.3rem; border-radius:8px; border:1px solid rgba(148,163,184,0.2);">'
+        f'<div style="color:#94A3B8; font-size:0.65rem;">{lbl_margin}</div>'
+        f'<div style="color:#34D399; font-weight:700; font-size:0.76rem; font-family:\'JetBrains Mono\',monospace; margin-top:0.2rem;">{feats["sent_margin"]:.0f}%/{feats["topic_margin"]:.0f}%</div></div>'
+        f'</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -593,54 +476,25 @@ def main() -> None:
     # TAB 1: DEMO PHÂN TÍCH PHẢN HỒI TRỰC TIẾP (2 CỘT TRÁI - PHẢI)
     # ══════════════════════════════════════════════════════════════════════════
     with tab_demo:
-        left_col, right_col = st.columns([1.05, 1.55], gap="large")
+        left_col, right_col = st.columns([0.92, 1.68], gap="large")
 
         with left_col:
-            card_hdr = "🎯 Kịch bản & Đầu vào Phản hồi" if lang == "vi" else "🎯 Scenario & Feedback Input"
-            card_sub = (
-                "Chọn kịch bản kiểm thử chuẩn hoặc nhập câu phản hồi sinh viên để phân tích"
-                if lang == "vi"
-                else "Select a curated benchmark scenario or enter custom student feedback"
-            )
-            st.markdown(
-                f"""
-                <div class="bento-card" style="padding:0.85rem 1.1rem; margin-bottom:0.65rem; border-left:4px solid #22D3EE;">
-                    <div style="font-size:1.08rem; font-weight:800; color:#F8FAFC;">{card_hdr}</div>
-                    <div style="font-size:0.8rem; color:#94A3B8;">{card_sub}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
             scenario_idx = st.selectbox(
-                label=(
-                    "Danh sách 9 kịch bản phản hồi sinh viên tiêu biểu:"
-                    if lang == "vi"
-                    else "Select from 9 benchmark student feedback scenarios:"
-                ),
+                label="🎯 Kịch bản mẫu:" if lang == "vi" else "🎯 Preset Scenario:",
                 options=list(range(len(SCENARIOS))),
                 format_func=lambda i: SCENARIOS[i]["title_vi" if lang == "vi" else "title_en"],
                 index=0,
                 key=f"scenario_selector_{lang}",
             )
             active_scenario = SCENARIOS[scenario_idx]
-            render_scenario_metadata_box(active_scenario, lang=lang)
 
             mode_options = (
-                [
-                    "So sánh song song (PhoBERT vs Cơ sở)",
-                    "Chỉ PhoBERT Đa nhiệm",
-                    "Chỉ Mô hình Cơ sở (TF-IDF)",
-                ]
+                ["So sánh 2 mô hình", "PhoBERT", "Mô hình Cơ sở"]
                 if lang == "vi"
-                else [
-                    "Side-by-Side (PhoBERT vs Baseline)",
-                    "PhoBERT Multi-Task Only",
-                    "Classical Baseline Only",
-                ]
+                else ["Compare Both", "PhoBERT", "Baseline"]
             )
             mode_idx = st.radio(
-                label="Chế độ suy luận mô hình:" if lang == "vi" else "Model inference mode:",
+                label="⚙️ Mô hình:" if lang == "vi" else "⚙️ Model:",
                 options=[0, 1, 2],
                 format_func=lambda i: mode_options[i],
                 index=0,
@@ -649,25 +503,14 @@ def main() -> None:
             )
 
             text_input = st.text_area(
-                label=(
-                    "Nội dung phản hồi sinh viên (tự động phân tích ngay khi nhập):"
-                    if lang == "vi"
-                    else "Vietnamese student feedback sentence (analyzed in real time):"
-                ),
+                label="✍️ Câu phản hồi:" if lang == "vi" else "✍️ Feedback Sentence:",
                 value=active_scenario["text"],
-                height=96,
+                height=84,
                 placeholder=(
-                    "Nhập câu phản hồi sinh viên tại đây..."
+                    "Nhập câu phản hồi sinh viên..."
                     if lang == "vi"
-                    else "Enter a Vietnamese student feedback sentence here..."
+                    else "Enter Vietnamese student feedback..."
                 ),
-            )
-
-            st.button(
-                "🚀 Thực hiện Phân tích Đa nhiệm Ngay" if lang == "vi" else "🚀 Run Multi-Task Analysis Now",
-                type="primary",
-                use_container_width=True,
-                key="btn_analyze_now",
             )
 
             cleaned = text_input.strip()
@@ -677,12 +520,7 @@ def main() -> None:
 
         with right_col:
             if not cleaned:
-                empty_msg = (
-                    "Vui lòng nhập nội dung phản hồi sinh viên hoặc chọn một kịch bản mẫu ở cột bên trái để xem hệ thống biểu đồ phân tích."
-                    if lang == "vi"
-                    else "Please enter a student feedback sentence or choose a preset scenario on the left to view detailed diagnostic charts."
-                )
-                st.info(empty_msg)
+                st.info("Chọn kịch bản hoặc nhập câu phản hồi ở cột trái." if lang == "vi" else "Select a scenario or enter feedback on the left.")
             else:
                 res_p: Optional[Dict[str, Any]] = None
                 res_b: Optional[Dict[str, Any]] = None
@@ -699,29 +537,19 @@ def main() -> None:
                     dt_b = time.perf_counter() - t1
 
                 p_title = "🚀 PhoBERT Đa nhiệm" if lang == "vi" else "🚀 PhoBERT Multi-Task"
-                p_arch = (
-                    "vinai/phobert-base-v2 · Gộp trung bình có mặt nạ · 2 Nhánh MLP"
-                    if lang == "vi"
-                    else "vinai/phobert-base-v2 · Masked Mean Pooling · Dual MLP Heads"
-                )
-                b_title = "📊 Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "📊 Classical Baseline (TF-IDF)"
-                b_arch = (
-                    "Tách từ PyVi · TF-IDF (1-2 âm tiết) · Hồi quy Logistic Cân bằng"
-                    if lang == "vi"
-                    else "PyVi Segmentation · TF-IDF (1-2 n-grams) · Balanced Logistic Regression"
-                )
+                b_title = "📊 Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "📊 Classical Baseline"
 
-                # 1. Thẻ thông số dự đoán, Entropy & Margin
+                # 1. Thanh thông số gọn (5 ô số liệu trực quan, không chữ thừa)
                 if mode_idx == 0 and res_p is not None and res_b is not None:
                     fc1, fc2 = st.columns(2)
                     with fc1:
-                        render_feature_summary_card(p_title, p_arch, res_p, dt_p, "#8B5CF6", lang)
+                        render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
                     with fc2:
-                        render_feature_summary_card(b_title, b_arch, res_b, dt_b, "#06B6D4", lang)
+                        render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
                 elif res_p is not None:
-                    render_feature_summary_card(p_title, p_arch, res_p, dt_p, "#8B5CF6", lang)
+                    render_feature_summary_card(p_title, res_p, dt_p, "#8B5CF6", lang)
                 elif res_b is not None:
-                    render_feature_summary_card(b_title, b_arch, res_b, dt_b, "#06B6D4", lang)
+                    render_feature_summary_card(b_title, res_b, dt_b, "#06B6D4", lang)
 
                 primary_res = res_p if res_p is not None else res_b
                 compare_res = res_b if (mode_idx == 0 and res_p is not None and res_b is not None) else None
@@ -733,95 +561,13 @@ def main() -> None:
                 compare_name = "Mô hình Cơ sở (TF-IDF)" if lang == "vi" else "Classical Baseline"
 
                 if primary_res is not None:
-                    # 2. Hàng biểu đồ 1: Đồng hồ đo độ tin cậy (Confidence Gauges)
-                    if mode_idx == 0 and res_p is not None and res_b is not None:
-                        g1, g2, g3, g4 = st.columns(4)
-                        with g1:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Cảm xúc (PhoBERT)" if lang == "vi" else "PhoBERT Sentiment",
-                                    res_p["sentiment"]["label"],
-                                    res_p["sentiment"]["confidence"],
-                                    accent_color="#8B5CF6",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_p_sent",
-                            )
-                        with g2:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Chủ đề (PhoBERT)" if lang == "vi" else "PhoBERT Topic",
-                                    res_p["topic"]["label"],
-                                    res_p["topic"]["confidence"],
-                                    accent_color="#8B5CF6",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_p_topic",
-                            )
-                        with g3:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Cảm xúc (Cơ sở)" if lang == "vi" else "Baseline Sentiment",
-                                    res_b["sentiment"]["label"],
-                                    res_b["sentiment"]["confidence"],
-                                    accent_color="#06B6D4",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_b_sent",
-                            )
-                        with g4:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Chủ đề (Cơ sở)" if lang == "vi" else "Baseline Topic",
-                                    res_b["topic"]["label"],
-                                    res_b["topic"]["confidence"],
-                                    accent_color="#06B6D4",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_b_topic",
-                            )
-                    else:
-                        g1, g2 = st.columns(2)
-                        with g1:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Độ tin cậy Cảm xúc" if lang == "vi" else "Sentiment Confidence",
-                                    primary_res["sentiment"]["label"],
-                                    primary_res["sentiment"]["confidence"],
-                                    accent_color="#8B5CF6",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_single_sent",
-                            )
-                        with g2:
-                            st.plotly_chart(
-                                make_confidence_gauge(
-                                    "Độ tin cậy Chủ đề" if lang == "vi" else "Topic Confidence",
-                                    primary_res["topic"]["label"],
-                                    primary_res["topic"]["confidence"],
-                                    accent_color="#06B6D4",
-                                    lang=lang,
-                                ),
-                                use_container_width=True,
-                                key="gauge_single_topic",
-                            )
-
-                    # 3. Hàng biểu đồ 2: Phân phối xác suất Cảm xúc (3 lớp) & Chủ đề (4 lớp)
+                    # Hàng biểu đồ 1: Phân phối xác suất Cảm xúc (3 lớp) & Chủ đề (4 lớp)
                     pb1, pb2 = st.columns(2)
                     with pb1:
                         st.plotly_chart(
                             make_probability_bar_chart(
                                 primary_res["sentiment"]["distribution"],
-                                (
-                                    "Phân phối Xác suất Cảm xúc (3 Lớp)"
-                                    if lang == "vi"
-                                    else "Sentiment Probability Distribution (3 Classes)"
-                                ),
+                                "Xác suất Cảm xúc (3 Lớp)" if lang == "vi" else "Sentiment Probability (3 Classes)",
                                 accent_color="#8B5CF6",
                                 lang=lang,
                                 compare_distribution=(
@@ -837,11 +583,7 @@ def main() -> None:
                         st.plotly_chart(
                             make_probability_bar_chart(
                                 primary_res["topic"]["distribution"],
-                                (
-                                    "Phân phối Xác suất Chủ đề (4 Lớp)"
-                                    if lang == "vi"
-                                    else "Topic Probability Distribution (4 Classes)"
-                                ),
+                                "Xác suất Chủ đề (4 Lớp)" if lang == "vi" else "Topic Probability (4 Classes)",
                                 accent_color="#06B6D4",
                                 lang=lang,
                                 compare_distribution=(
