@@ -1,4 +1,4 @@
-# Python bytecode and caches
+# Bytecode & caches
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,21 +6,17 @@ __pycache__/
 .pytest_cache/
 .coverage
 
-# Virtual environments
+# Environments
 venv/
 .venv/
 env/
 
-# Internal agent working artifacts
-.agents/
+# Large model weight binaries (>100MB)
+saved_models/phobert/*.pt
+saved_models/phobert/*.bin
+saved_models/phobert/*.safetensors
 
-# Large model weight binaries (>100MB GitHub limit)
-# Re-generate locally via training scripts or download from checkpoints
-saved_models/*/*.pt
-saved_models/*/*.bin
-saved_models/*/*.safetensors
-
-# IDE / OS junk
+# OS & IDE
 .DS_Store
 Thumbs.db
 .vscode/

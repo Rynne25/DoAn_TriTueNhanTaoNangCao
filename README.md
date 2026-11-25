@@ -1,216 +1,139 @@
-# Text Classification of Vietnamese Student Feedback
+# Project 1 — Text Classification of Vietnamese Student Feedback
+**Team 25**:
+- Lê Văn Hoài Rin (Student ID: 29211332113)
+- Nguyễn Trung Hiếu (Student ID: 29211362521)
 
-An educational, student-friendly machine learning project comparing a **Classical Baseline (TF-IDF + Dual Logistic Regression)** against a **Fine-Tuned PhoBERT Multi-Task Model (`vinai/phobert-base-v2`)** on the academic **UIT-VSFC (Vietnamese Students' Feedback Corpus)** dataset, complete with an interactive Streamlit demo dashboard.
-
----
-
-## 📌 Executive Overview
-
-In academic institutions, analyzing student feedback is critical for quality assurance and continuous curriculum improvement. This repository implements an end-to-end NLP pipeline addressing two simultaneous classification tasks on Vietnamese student feedback:
-
-1. **Sentiment Classification (3 Classes)**:
-   - `0`: **Negative** (`tiêu cực`) — Dissatisfaction, critical feedback, or reported deficiencies.
-   - `1`: **Neutral** (`trung tính`) — Objective remarks, standard factual statements, or balanced observations.
-   - `2`: **Positive** (`tích cực`) — Commendations, praise, and satisfaction.
-
-2. **Topic Classification (4 Classes)**:
-   - `0`: **Lecturer** (`giảng viên`) — Teaching style, demeanor, pacing, dedication, punctuality.
-   - `1`: **Training Program** (`chương trình đào tạo`) — Curriculum, course structure, syllabus, exams, credits.
-   - `2`: **Facility** (`cơ sở vật chất`) — Classrooms, projectors, air conditioning, computer labs, Wi-Fi.
-   - `3`: **Others** (`khác`) — Tuition, administration, student affairs, extracurriculars.
-
-### Architecture Comparison: Classical vs Deep Learning
-
-- **Classical Baseline (`models/baseline_model.py`)**:
-  - Preprocesses text using pure-Python word segmentation (`pyvi.ViTokenizer`).
-  - Extracts word and bigram features via `TfidfVectorizer(ngram_range=(1,2), sublinear_tf=True)`.
-  - Classifies sentiment and topic independently using balanced `LogisticRegression` heads.
-  - Extremely lightweight (~0.95 MB), trains in ~2 seconds, and achieves sub-millisecond inference latency on standard CPU hardware.
-
-- **PhoBERT Multi-Task (`models/phobert_model.py`)**:
-  - Leverages pre-trained RoBERTa weights specialized for Vietnamese (`vinai/phobert-base-v2`).
-  - Shares a 768-dimensional `[CLS]` pooled sentence representation.
-  - Jointly optimizes dual linear classification heads with balanced cross-entropy multi-task loss.
-  - Understands contextual nuance, syntactic dependencies, and linguistic inversion.
+Dự án máy học và xử lý ngôn ngữ tự nhiên phân loại phản hồi sinh viên tiếng Việt dựa trên bộ dữ liệu học thuật **UIT-VSFC** (Vietnamese Students' Feedback Corpus).
+Nghiên cứu so sánh thực nghiệm hai phương pháp theo đúng yêu cầu đề bài:
+1. **Classical Baseline**: TF-IDF n-gram (1-2) + Dual Balanced Logistic Regression.
+2. **Main Model (Proposed)**: PhoBERT Multi-Task (`vinai/phobert-base-v2` + Masked Mean Pooling + Dual MLP Heads) phân loại đồng thời cả **Cảm xúc** (3 lớp) và **Chủ đề** (4 lớp).
 
 ---
 
-## 📂 Repository Structure
+## 1. Cài Đặt (Setup)
 
-```
-vietnamese-feedback-classifier/
-├── data/
-│   ├── download_data.py          # Automatic downloader for UIT-VSFC dataset splits
-│   └── dataset.py                # PyVi word segmentation, PyTorch Dataset, and DataLoader utilities
-├── models/
-│   ├── baseline_model.py         # TF-IDF + Dual Logistic Regression baseline architecture
-│   └── phobert_model.py          # PhoBERTMultiTask architecture with shared CLS encoder & dual heads
-├── training/
-│   ├── train_baseline.py         # Fast baseline trainer (persists to saved_models/baseline.joblib)
-│   └── train_phobert.py          # PhoBERT multi-task fine-tuning (AMP fp16, AdamW, linear scheduler)
-├── evaluation/
-│   ├── __init__.py               # Package initializer
-│   └── evaluate.py               # Standalone test split evaluator with formatted metrics & reports
-├── app/
-│   └── app.py                    # Streamlit interactive feedback analyzer demo dashboard
-├── saved_models/
-│   ├── baseline.joblib           # Trained serialized baseline pipeline weights
-│   └── phobert_multitask/        # Fine-tuned PhoBERT PyTorch checkpoint & tokenizer configs
-├── results/
-│   ├── comparison_summary.md     # In-depth comparative evaluation report with class breakdowns
-│   └── metrics.json              # Complete machine-readable evaluation results and system metadata
-├── tests/                        # Full automated test suite (schema, models, evaluation, dashboard)
-├── requirements.txt              # Pinned, student-friendly Python dependencies
-└── README.md                     # Step-by-step user documentation and quickstart guide
-```
-
----
-
-## 🚀 Quick Start Guide
-
-Follow these step-by-step instructions with copy-pasteable commands to set up the environment, acquire data, train the models, evaluate benchmarks, and launch the web dashboard.
-
-### Step 1: Install Dependencies
-
-Ensure you have Python 3.10 to 3.12 installed. Then install all required packages:
-
+Yêu cầu Python 3.10+ và cài đặt các thư viện phụ thuộc:
 ```bash
 pip install -r requirements.txt
 ```
 
-*(Optional for GPU Users)*: If you have an NVIDIA GPU and CUDA installed, install PyTorch with CUDA acceleration:
-```bash
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-```
+---
 
-### Step 2: Download UIT-VSFC Dataset
+## 2. Dữ Liệu (Data)
 
-Automatically acquire and cache the official UIT-VSFC dataset splits (`train`, `validation`, `test`):
-
+Bộ dữ liệu **UIT-VSFC** chính thức được tải tự động từ Hugging Face endpoint về `data/uit_vsfc/`:
 ```bash
 python data/download_data.py
 ```
+Quy mô phân chia chuẩn (không rò rỉ dữ liệu giữa các tập):
+- **Tập huấn luyện (Train)**: 11.426 câu
+- **Tập kiểm tra (Validation)**: 1.583 câu
+- **Tập kiểm thử độc lập (Test)**: 3.166 câu
 
-This verifies and caches 11,426 training, 1,583 validation, and 3,166 test feedback samples locally under `data/uit_vsfc/`.
+**Hai tác vụ phân loại**:
+- **Cảm xúc (Sentiment - 3 nhãn)**: `0: negative` (tiêu cực), `1: neutral` (trung tính), `2: positive` (tích cực).
+- **Chủ đề (Topic - 4 nhãn)**: `0: lecturer` (giảng viên), `1: training_program` (chương trình đào tạo), `2: facility` (cơ sở vật chất), `3: others` (khác).
 
-### Step 3: Train Classical Baseline
+---
 
-Train the TF-IDF + Logistic Regression baseline pipeline:
+## 3. Hướng Dẫn Chạy (How to Run)
 
+### ⚠️ Trọng số mô hình đã huấn luyện sẵn (Pretrained Checkpoints)
+- **Classical Baseline**: File `saved_models/baseline.joblib` (1.23 MB) có sẵn trực tiếp trong repo.
+- **PhoBERT Multi-Task**: File `saved_models/phobert/model.pt` (516.56 MB) vượt giới hạn 100 MB của GitHub nên được lưu trữ tại [GitHub Releases v1.0.0](https://github.com/Tr-Hieu205/DoAn_TriTueNhanTaoNangCao/releases/tag/v1.0.0):
+  - **Tự động**: Khi chạy `streamlit run app/app.py` hoặc `python evaluation/evaluate.py`, code sẽ **tự động tải** file `model.pt` từ GitHub Releases về thư mục `saved_models/phobert/`.
+  - **Thủ công**: Tải trực tiếp từ [link tải model.pt](https://github.com/Tr-Hieu205/DoAn_TriTueNhanTaoNangCao/releases/download/v1.0.0/model.pt) rồi đặt vào `saved_models/phobert/model.pt`.
+
+### A. Huấn luyện mô hình Baseline cổ điển (~2 giây):
 ```bash
 python training/train_baseline.py
 ```
+*Trọng số lưu tại `saved_models/baseline.joblib`.*
 
-The script trains both sentiment and topic classifiers in approximately 2 seconds and saves the model artifact to `saved_models/baseline.joblib`.
-
-### Step 4: Fine-tune PhoBERT Multi-Task Model
-
-Fine-tune the PhoBERT Transformer model across both tasks:
-
+### B. Huấn luyện mô hình PhoBERT Multi-Task:
 ```bash
 python training/train_phobert.py
 ```
+*Trọng số lưu tại `saved_models/phobert/model.pt`.*
 
-- Automatically selects CUDA GPU if available; otherwise falls back gracefully to CPU.
-- Uses mixed precision (`torch.cuda.amp.autocast`) for memory efficiency on GPU.
-- Saves the best checkpoint and tokenizer files to `saved_models/phobert_multitask/`.
-
-### Step 5: Run Comparative Evaluation
-
-Evaluate both the Classical Baseline and PhoBERT models on the official test set ($N=3,166$):
-
+### C. Đánh giá và so sánh thực nghiệm trên tập Test (N=3.166):
 ```bash
-python evaluation/evaluate.py --split test --save_reports
+python evaluation/evaluate.py
 ```
 
-This outputs an aligned terminal table and updates `results/comparison_summary.md` and `results/metrics.json`.
-
-### Step 6: Launch Interactive Demo Dashboard
-
-Launch the Streamlit web application:
-
+### D. Khởi chạy Web Demo (Feedback Analyzer Dashboard):
 ```bash
 streamlit run app/app.py
 ```
 
-Open your browser at `http://localhost:8501` to test feedback classification in real time.
-
-### Step 7: Run Automated Test Suite
-
-Run the full project test suite to verify pipeline integrity, model contracts, boundary conditions, and dashboard components:
-
+### E. Chạy kiểm thử tự động:
 ```bash
-python -m unittest discover tests -v
+python tests/test_core.py
 ```
 
 ---
 
-## 📊 Evaluation Results & Benchmark Comparison
+## 4. Kết Quả Thực Nghiệm (Results)
 
-Evaluated on the official UIT-VSFC `test` split ($N = 3,166$ samples) under identical runtime environments:
+Đánh giá thực tế trên toàn bộ 3.166 câu của tập Test UIT-VSFC:
 
-| Task / Metric | Classical Baseline (TF-IDF + LR) | PhoBERT Multi-Task (v2) | Delta (Δ) | Relative Change |
-| :--- | :---: | :---: | :---: | :---: |
-| **Sentiment Accuracy** | 86.73% | **93.49%** | +6.76% | +7.79% |
-| **Sentiment Macro-F1** | 71.90% | **82.89%** | +10.99% | +15.29% |
-| **Topic Accuracy** | 80.99% | **88.41%** | +7.42% | +9.17% |
-| **Topic Macro-F1** | 72.72% | **80.10%** | +7.39% | +10.16% |
-| **Mean Macro-F1** | 72.31% | **81.50%** | +9.19% | +12.71% |
-| **Inference Latency** | **0.05 ms/sample** | 30.10 ms/sample | +30.05 ms | 660.9x slower |
-| **Model Size** | **0.95 MB** | 515.06 MB | +514.11 MB | 541.2x larger |
+| Mô hình | Sentiment Accuracy | Sentiment Macro-F1 | Topic Accuracy | Topic Macro-F1 | Tốc độ suy luận |
+|---|---|---|---|---|---|
+| **Classical Baseline (TF-IDF + LR)** | **87.81%** | **72.76%** | **82.66%** | **73.69%** | ~48.200 câu/giây |
+| **PhoBERT Multi-Task (Đề xuất)** | **93.97%** | **84.29%** | **88.72%** | **80.30%** | ~17.3 câu/giây |
+| **Mức cải thiện của PhoBERT** | **+6.16%** | **+11.53%** | **+6.06%** | **+6.62%** | — |
 
-### Pedagogical Takeaways for Students
-
-1. **Linear Simplicity vs Neural Complexity**:
-   - For high-volume student sentiment analysis with clear keyword lexicons (e.g., *nhiệt tình*, *hư hỏng*, *dày đặc*), a tuned Classical Baseline achieves remarkable accuracy (>86%) at negligible computational and memory cost.
-2. **Contextual Nuance & Sarcasm**:
-   - TF-IDF bag-of-words ignores word order and struggles on double negations and rhetorical irony (e.g., *"Cảm ơn nhà trường đã cho chúng em trải nghiệm phòng học xông hơi"*). Deep contextual embeddings from PhoBERT are required to disentangle subtle sentiment inversions.
-3. **Macro-F1 vs Raw Accuracy (Class Imbalance)**:
-   - UIT-VSFC is heavily skewed: Lecturer topic represents 72.33% of samples, and Neutral sentiment represents only 5.27%. Macro-F1 weights each class equally, making it the proper metric for assessing minority class sensitivity.
+**Nhận xét**: PhoBERT Multi-Task vượt trội mô hình Baseline cổ điển trên cả 2 tác vụ, cải thiện mạnh mẽ nhất ở độ đo `Sentiment Macro-F1` (**+11.53%**) và `Topic Macro-F1` (**+6.62%**), đồng thời vượt qua mốc chuẩn cũ trên GitHub (93.49% / 82.89% và 88.41% / 80.10%).
 
 ---
 
-## 🖥️ Interactive Dashboard Features
+## 5. Phân Tích Lỗi Sai (Short Error Analysis)
 
-The Streamlit dashboard (`app/app.py`) provides an intuitive, student-friendly interface with the following capabilities:
+Từ kết quả chạy thực nghiệm trực tiếp của `evaluation/evaluate.py`, nhóm đúc kết 3 nhóm lỗi sai điển hình:
 
-1. **Flexible Model Selection Modes**:
-   - **Classical Baseline**: High-speed, lightweight classification.
-   - **PhoBERT Multi-Task**: Deep bidirectional contextual analysis.
-   - **Side-by-Side Comparison**: Runs both models simultaneously on the same text to highlight agreement, divergence, and latency differences.
+1. **Hiểu ngữ cảnh ẩn vs Đếm từ khóa bề mặt (PhoBERT thắng Baseline)**:
+   - *Câu phản hồi*: `"nói tiếng anh lưu loát ."` (Nhãn thực tế: `positive | lecturer`).
+   - *Baseline*: Dự đoán `positive | others` do câu không chứa các từ khóa hiển ngôn như "thầy", "cô".
+   - *PhoBERT*: Nhận biết được hành động "nói tiếng Anh lưu loát" là lời khen ngợi kỹ năng sư phạm của giảng viên, dự đoán chính xác `positive | lecturer`.
+   - *Câu mỉa mai/ẩn ý*: `"trong trường macbook thầy số hai thì không có máy nào số một ."` (Nhãn thực tế: `positive | others`). Baseline bị các từ phủ định "không", "máy" đánh lừa thành `negative | facility`, trong khi PhoBERT hiểu được cấu trúc khen hài hước.
 
-2. **Probability Distribution Bars**:
-   - Displays full softmax / calibrated probability distributions for all 3 sentiment classes and all 4 topic classes.
-   - Visual progress bars highlight the model's confidence and decision margin.
+2. **Khó khăn ở lớp Trung tính (`neutral`) do mất cân bằng dữ liệu**:
+   - *Câu phản hồi*: `"cách mà cô tiếp cận với sinh viên ."` (Nhãn thực tế: `neutral | lecturer`).
+   - Cả 2 mô hình đều dự đoán nhầm thành `positive | lecturer`.
+   - *Nguyên nhân*: Lớp `neutral` chỉ chiếm **5.27%** (167/3.166 câu test). Ngữ cảnh câu miêu tả trung tính rất mỏng và dễ bị thiên lệch về các từ mang sắc thái khen ngợi chung.
 
-3. **10 Curated Feedback Presets**:
-   - Pre-loaded authentic Vietnamese feedback samples spanning all sentiment-topic combinations:
-     1. *Tích cực - Giảng viên*: Thầy dạy rất nhiệt tình, giảng giải cặn kẽ...
-     2. *Tiêu cực - Cơ sở vật chất*: Phòng máy tính hư hỏng nhiều, wifi trường chập chờn...
-     3. *Trung tính - Chương trình*: Chương trình đào tạo nhìn chung tạm ổn...
-     4. *Tiêu cực - Giảng viên*: Giáo viên giảng bài khô khan, nói quá nhanh...
-     5. *Tích cực - Cơ sở vật chất*: Phòng học thoáng mát, máy lạnh chạy êm...
-     6. *Tiêu cực - Chương trình*: Lịch học và lịch thi bố trí quá dày đặc...
-     7. *Tích cực - Chương trình*: Môn học có tính ứng dụng thực tế rất cao...
-     8. *Tiêu cực - Khác*: Học phí tăng nhưng thủ tục hành chính chậm...
-     9. *Trung tính - Giảng viên*: Thầy dạy theo đúng giáo trình trong slide...
-     10. *Ngữ cảnh mỉa mai*: Cảm ơn nhà trường đã cho trải nghiệm phòng học xông hơi...
-
-4. **Resilience & Graceful Failover**:
-   - If PhoBERT weights are missing or running on CPU-constrained systems, the application alerts the user cleanly with a friendly banner and seamlessly falls back to the Classical Baseline without crashing.
-   - Leverages Streamlit resource caching (`@st.cache_resource`) for instant load times upon subsequent queries.
+3. **Giao thoa giữa Chương trình đào tạo và Giảng viên**:
+   - *Câu phản hồi*: `"cung cấp kiến thức bổ ích ."` (Nhãn thực tế: `positive | lecturer`).
+   - Baseline đoán nhầm sang `training_program` vì từ "kiến thức", trong khi PhoBERT xác định chính xác giảng viên là chủ thể truyền đạt kiến thức trong tiết học.
 
 ---
 
-## 🛡️ Scope Discipline & Compliance with R5
+## 📁 Cấu Trúc Mã Nguồn
 
-In strict compliance with **Requirement R5 (Scope Constraints)**:
-- This project intentionally focuses **100% on clean, reproducible, executable code, evaluation tables, and the interactive demo dashboard**.
-- **No 15-20 page formal report document or presentation slide decks** have been generated. All technical documentation is contained in this concise `README.md` and the machine-generated `results/comparison_summary.md`.
-
----
-
-## 📜 License & Citation
-
-- **Corpus**: UIT-VSFC is provided by the University of Information Technology, VNU-HCM (Nguyen et al., 2018).
-- **Pre-trained Weights**: PhoBERT (`vinai/phobert-base-v2`) by VinAI Research (Nguyen & Nguyen, 2020).
+```
+.
+├── app/
+│   └── app.py                  # Streamlit Dashboard phân tích phản hồi sinh viên
+├── data/
+│   ├── download_data.py        # Tự động tải dataset Parquet từ Hugging Face
+│   ├── dataset.py              # Xử lý dữ liệu, tách từ PyVi và DataLoader PyTorch
+│   └── uit_vsfc/               # Bộ dữ liệu gốc (train, validation, test.parquet)
+├── evaluation/
+│   └── evaluate.py             # Đánh giá Accuracy & Macro-F1, trích xuất Error Analysis
+├── models/
+│   ├── baseline_model.py       # Mô hình Classical Baseline (TF-IDF + Dual LR)
+│   └── phobert_model.py        # Mô hình PhoBERT Multi-Task (Mean Pooling + Dual MLP)
+├── saved_models/
+│   ├── baseline.joblib         # Trọng số Baseline đã huấn luyện
+│   └── phobert/                # Trọng số PhoBERT Multi-Task (model.pt trên GitHub Releases v1.0.0 + tokenizer)
+├── tests/
+│   └── test_core.py            # Kiểm thử tự động (dữ liệu, model, pipeline)
+├── training/
+│   ├── train_baseline.py       # Huấn luyện mô hình Baseline cổ điển
+│   └── train_phobert.py        # Huấn luyện mô hình PhoBERT Multi-Task
+├── results/
+│   ├── metrics.json            # File JSON chứa toàn bộ chỉ số thực nghiệm
+│   └── comparison_summary.md   # Báo cáo tóm tắt so sánh
+├── requirements.txt            # Thư viện phụ thuộc
+└── (3 file hồ sơ nộp đồ án: 1 slide .pptx + 2 báo cáo 15-20 trang .docx)
+```

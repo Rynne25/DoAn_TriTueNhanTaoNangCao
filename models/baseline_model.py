@@ -1,12 +1,12 @@
 """
 models/baseline_model.py
-Classical Baseline Model for Vietnamese Student Feedback Classification.
-Architecture: Shared TF-IDF Vectorizer + Dual Balanced Logistic Regression Heads.
-Conforms strictly to PROJECT.md § Interface Contracts.
+Mô hình Baseline cổ điển cho bài toán phân loại phản hồi sinh viên (UIT-VSFC):
+Kiến trúc: TF-IDF (n-gram 1-2) + 2 bộ phân loại Logistic Regression độc lập (Cảm xúc & Chủ đề).
 """
 
 import os
 import sys
+sys.dont_write_bytecode = True
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import joblib
@@ -14,74 +14,36 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-from models.language import detect_language
-
-# Windows console encoding safeguard
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
-if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8")
-
-# Official UIT-VSFC Label Mappings conforming to data/dataset.py & PROJECT.md
-SENTIMENT_LABELS: List[str] = ["negative", "neutral", "positive"]
-TOPIC_LABELS: List[str] = ["lecturer", "training_program", "facility", "others"]
-
-SENTIMENT_MAP: Dict[int, str] = {0: "negative", 1: "neutral", 2: "positive"}
-TOPIC_MAP: Dict[int, str] = {0: "lecturer", 1: "training_program", 2: "facility", 3: "others"}
-
-SENTIMENT_TO_ID: Dict[str, int] = {v: k for k, v in SENTIMENT_MAP.items()}
-TOPIC_TO_ID: Dict[str, int] = {v: k for k, v in TOPIC_MAP.items()}
+from data.dataset import (
+    SENTIMENT_LABELS, SENTIMENT_MAP, TOPIC_LABELS, TOPIC_MAP, segment_text,
+)
 
 
-def _segment_text(text: Optional[str]) -> str:
-    """Applies PyVi word segmentation idempotently."""
-    if text is None:
-        return ""
-    cleaned = str(text).strip()
-    if not cleaned:
-        return ""
-    try:
-        from pyvi import ViTokenizer
-        return ViTokenizer.tokenize(cleaned)
-    except ImportError:
-        return cleaned
-
-
-def _calibrate_probs(probs: np.ndarray, classes: np.ndarray, num_classes: int) -> np.ndarray:
-    """
-    Ensures predicted probability matrix has exactly num_classes columns,
-    correctly mapped even if some classes were unobserved in small dummy splits.
-    """
-    if len(classes) == num_classes and np.array_equal(classes, np.arange(num_classes)):
+def _calibrate_probs(probs: np.ndarray, classes: np.ndarray, n_classes: int) -> np.ndarray:
+    """Đảm bảo ma trận xác suất đủ n_classes cột tương ứng với các lớp nhãn."""
+    if probs.shape[1] == n_classes:
         return probs
-    full_probs = np.zeros((probs.shape[0], num_classes), dtype=np.float64)
-    for col_idx, cls_id in enumerate(classes):
-        if 0 <= cls_id < num_classes:
-            full_probs[:, cls_id] = probs[:, col_idx]
-    return full_probs
+    full = np.zeros((probs.shape[0], n_classes), dtype=float)
+    for idx, c in enumerate(classes):
+        if 0 <= c < n_classes:
+            full[:, c] = probs[:, idx]
+    return full
 
 
 class VietnameseFeedbackBaseline:
-    """
-    Classical Baseline Model for Vietnamese Student Feedback Classification.
-
-    Combines a shared TF-IDF feature extractor (n-gram 1-2, sublinear TF) with dual
-    balanced Logistic Regression heads for Sentiment (3 classes) and Topic (4 classes).
-    """
+    """Mô hình Baseline cổ điển so sánh trong đồ án: TF-IDF + Dual Logistic Regression."""
 
     def __init__(
         self,
         ngram_range: Tuple[int, int] = (1, 2),
         min_df: int = 2,
         max_df: float = 0.9,
-        max_features: int = 10000,
+        max_features: int = 25000,
         sublinear_tf: bool = True,
-        C: float = 1.0,
+        C: float = 3.0,
         max_iter: int = 1000,
-        class_weight: str = "balanced",
+        class_weight: Optional[str] = "balanced",
         random_state: int = 42,
-        default_word_segment: bool = True,
-        language: str = "vi",
     ):
         self.ngram_range = ngram_range
         self.min_df = min_df
@@ -92,216 +54,85 @@ class VietnameseFeedbackBaseline:
         self.max_iter = max_iter
         self.class_weight = class_weight
         self.random_state = random_state
-        self.default_word_segment = bool(default_word_segment)
-        self.language = str(language)
 
         self.vectorizer = TfidfVectorizer(
-            ngram_range=ngram_range,
-            min_df=min_df,
-            max_df=max_df,
-            max_features=max_features,
-            sublinear_tf=sublinear_tf,
+            ngram_range=ngram_range, min_df=min_df, max_df=max_df,
+            max_features=max_features, sublinear_tf=sublinear_tf,
         )
         self.sentiment_clf = LogisticRegression(
-            C=C,
-            max_iter=max_iter,
-            class_weight=class_weight,
-            random_state=random_state,
+            C=C, max_iter=max_iter, class_weight=class_weight, random_state=random_state
         )
         self.topic_clf = LogisticRegression(
-            C=C,
-            max_iter=max_iter,
-            class_weight=class_weight,
-            random_state=random_state,
+            C=C, max_iter=max_iter, class_weight=class_weight, random_state=random_state
         )
         self.sentiment_labels = list(SENTIMENT_LABELS)
         self.topic_labels = list(TOPIC_LABELS)
         self.is_fitted = False
 
-    def _resolve_word_segment(self, word_segment: Optional[bool]) -> bool:
-        """Resolves effective word segmentation flag, defaulting safely for legacy pickled models."""
-        if word_segment is None:
-            return bool(getattr(self, "default_word_segment", True))
-        return bool(word_segment)
+    def fit(self, texts: List[str], sentiments: List[int], topics: List[int], word_segment: bool = True):
+        """Huấn luyện trích xuất đặc trưng TF-IDF và 2 bộ phân loại Logistic Regression."""
+        processed = [segment_text(t) if word_segment else str(t or "") for t in texts]
+        if len(texts) <= 5:
+            self.vectorizer.min_df = 1
+            self.vectorizer.max_df = 1.0
 
-    def fit(
-        self,
-        texts: List[str],
-        sentiments: List[int],
-        topics: List[int],
-        word_segment: Optional[bool] = None,
-    ) -> "VietnameseFeedbackBaseline":
-        """
-        Fits the shared TF-IDF vectorizer and both Logistic Regression classifiers.
-
-        Args:
-            texts: List of feedback strings (raw or pre-segmented).
-            sentiments: Integer sentiment labels in {0, 1, 2}.
-            topics: Integer topic labels in {0, 1, 2, 3}.
-            word_segment: If True, ensures PyVi segmentation is applied. If None, uses default_word_segment.
-
-        Returns:
-            self: The fitted model instance.
-        """
-        if len(texts) != len(sentiments) or len(texts) != len(topics):
-            raise ValueError(
-                f"Mismatched dataset lengths: texts ({len(texts)}), "
-                f"sentiments ({len(sentiments)}), topics ({len(topics)})"
-            )
-
-        use_ws = self._resolve_word_segment(word_segment)
-        processed_texts = [_segment_text(t) if use_ws else str(t or "") for t in texts]
-
-        # Shared feature extraction
-        X = self.vectorizer.fit_transform(processed_texts)
-
-        # Dual classification heads
+        X = self.vectorizer.fit_transform(processed)
         self.sentiment_clf.fit(X, sentiments)
         self.topic_clf.fit(X, topics)
-
         self.is_fitted = True
         return self
 
-    def predict_proba(
-        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Computes calibrated class probabilities for sentiment and topic.
+    def predict_proba(self, texts: Union[str, List[str]], word_segment: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+        """Dự đoán phân phối xác suất cho Cảm xúc (3 lớp) và Chủ đề (4 lớp)."""
+        input_list = [texts] if isinstance(texts, str) else list(texts)
+        if not input_list:
+            return np.empty((0, 3)), np.empty((0, 4))
 
-        Returns:
-            Tuple of (sentiment_probs, topic_probs) as numpy arrays.
-        """
-        if not self.is_fitted:
-            raise RuntimeError("Model is not fitted. Call fit() or load() first.")
-
-        if isinstance(texts, str):
-            input_list = [texts]
-        else:
-            input_list = list(texts)
-
-        if len(input_list) == 0:
-            return (
-                np.empty((0, len(SENTIMENT_MAP)), dtype=np.float64),
-                np.empty((0, len(TOPIC_MAP)), dtype=np.float64),
-            )
-
-        use_ws = self._resolve_word_segment(word_segment)
-        processed = [_segment_text(t) if use_ws else str(t or "") for t in input_list]
+        processed = [segment_text(t) if word_segment else str(t or "") for t in input_list]
         X = self.vectorizer.transform(processed)
-        raw_sent_probs = self.sentiment_clf.predict_proba(X)
-        raw_topic_probs = self.topic_clf.predict_proba(X)
+        s_probs = _calibrate_probs(self.sentiment_clf.predict_proba(X), self.sentiment_clf.classes_, 3)
+        t_probs = _calibrate_probs(self.topic_clf.predict_proba(X), self.topic_clf.classes_, 4)
+        return s_probs, t_probs
 
-        sent_probs = _calibrate_probs(raw_sent_probs, self.sentiment_clf.classes_, len(SENTIMENT_MAP))
-        topic_probs = _calibrate_probs(raw_topic_probs, self.topic_clf.classes_, len(TOPIC_MAP))
-        return sent_probs, topic_probs
-
-    def predict_labels(
-        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
-    ) -> Tuple[List[int], List[int]]:
-        """
-        Fast vectorized helper returning predicted label IDs.
-
-        Returns:
-            Tuple of (sentiment_label_ids, topic_label_ids) as integer lists.
-        """
-        sent_probs, topic_probs = self.predict_proba(texts, word_segment=word_segment)
-        if len(sent_probs) == 0:
+    def predict_labels(self, texts: Union[str, List[str]], word_segment: bool = True) -> Tuple[List[int], List[int]]:
+        """Dự đoán nhãn ID cho cả 2 tác vụ."""
+        sp, tp = self.predict_proba(texts, word_segment=word_segment)
+        if len(sp) == 0:
             return [], []
-        sent_ids = np.argmax(sent_probs, axis=1).astype(int).tolist()
-        topic_ids = np.argmax(topic_probs, axis=1).astype(int).tolist()
-        return sent_ids, topic_ids
+        return np.argmax(sp, axis=1).astype(int).tolist(), np.argmax(tp, axis=1).astype(int).tolist()
 
-    def predict(
-        self, texts: Union[str, List[str]], word_segment: Optional[bool] = None
-    ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
-        """
-        Unified prediction interface conforming strictly to PROJECT.md § Interface Contracts.
-
-        Args:
-            texts: Single string or list of Vietnamese feedback sentences.
-            word_segment: If True, applies idempotent PyVi segmentation.
-
-        Returns:
-            If single string: A single dictionary with 'sentiment' and 'topic' fields.
-            If list: A list of dictionaries matching the same contract.
-        """
+    def predict(self, texts: Union[str, List[str]], word_segment: bool = True) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+        """Giao diện dự đoán chuẩn kèm nhãn, độ tin cậy và phân phối xác suất."""
         is_single = isinstance(texts, str)
-        if is_single:
-            input_list = [texts]
-        else:
-            input_list = list(texts)
-
-        if len(input_list) == 0:
+        input_list = [texts] if is_single else list(texts)
+        if not input_list:
             return []
 
-        sent_probs, topic_probs = self.predict_proba(input_list, word_segment=word_segment)
-
-        results: List[Dict[str, Any]] = []
+        sp, tp = self.predict_proba(input_list, word_segment=word_segment)
+        results = []
         for i in range(len(input_list)):
-            s_row = sent_probs[i]
-            t_row = topic_probs[i]
-
-            s_id = int(np.argmax(s_row))
-            t_id = int(np.argmax(t_row))
-
-            s_conf = float(s_row[s_id])
-            t_conf = float(t_row[t_id])
-
-            s_dist = {SENTIMENT_MAP[c]: float(s_row[c]) for c in range(len(SENTIMENT_MAP))}
-            t_dist = {TOPIC_MAP[c]: float(t_row[c]) for c in range(len(TOPIC_MAP))}
-
-            item = {
+            sid, tid = int(np.argmax(sp[i])), int(np.argmax(tp[i]))
+            results.append({
                 "sentiment": {
-                    "label": SENTIMENT_MAP[s_id],
-                    "label_id": s_id,
-                    "confidence": s_conf,
-                    "distribution": s_dist,
+                    "label": SENTIMENT_MAP[sid], "label_id": sid, "confidence": float(sp[i, sid]),
+                    "distribution": {SENTIMENT_MAP[c]: float(sp[i, c]) for c in range(3)},
                 },
                 "topic": {
-                    "label": TOPIC_MAP[t_id],
-                    "label_id": t_id,
-                    "confidence": t_conf,
-                    "distribution": t_dist,
+                    "label": TOPIC_MAP[tid], "label_id": tid, "confidence": float(tp[i, tid]),
+                    "distribution": {TOPIC_MAP[c]: float(tp[i, c]) for c in range(4)},
                 },
-            }
-            results.append(item)
-
+            })
         return results[0] if is_single else results
 
     def save(self, path: str = "saved_models/baseline.joblib") -> str:
-        """
-        Serializes the model into a joblib file. Automatically creates directory.
-        """
-        if not self.is_fitted:
-            raise RuntimeError("Cannot save an unfitted model. Fit before saving.")
-        abs_path = os.path.abspath(path)
-        os.makedirs(os.path.dirname(abs_path), exist_ok=True)
-        joblib.dump(self, abs_path)
-        return abs_path
+        """Lưu toàn bộ mô hình và bộ trích xuất đặc trưng ra file joblib."""
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        joblib.dump(self, path)
+        return path
 
     @classmethod
     def load(cls, path: str = "saved_models/baseline.joblib") -> "VietnameseFeedbackBaseline":
-        """
-        Deserializes model from disk with backwards-compatible state loading.
-        """
+        """Nạp mô hình đã lưu từ file joblib."""
         if not os.path.isfile(path):
-            raise FileNotFoundError(f"Baseline model checkpoint not found at '{path}'.")
-        loaded = joblib.load(path)
-        if isinstance(loaded, cls):
-            if not hasattr(loaded, "default_word_segment"):
-                loaded.default_word_segment = True
-            if not hasattr(loaded, "language"):
-                loaded.language = "vi"
-            return loaded
-        elif isinstance(loaded, dict):
-            instance = cls(
-                default_word_segment=loaded.get("default_word_segment", True),
-                language=loaded.get("language", "vi"),
-            )
-            instance.vectorizer = loaded["vectorizer"]
-            instance.sentiment_clf = loaded["sentiment_clf"]
-            instance.topic_clf = loaded["topic_clf"]
-            instance.is_fitted = loaded.get("is_fitted", True)
-            return instance
-        else:
-            raise TypeError(f"Unrecognized serialized object type: {type(loaded)}")
+            raise FileNotFoundError(f"Không tìm thấy file mô hình tại '{path}'.")
+        return joblib.load(path)
