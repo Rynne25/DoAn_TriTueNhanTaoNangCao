@@ -113,7 +113,8 @@ Từ kết quả chạy thực nghiệm trực tiếp của `evaluation/evaluate
 ```
 .
 ├── app/
-│   └── app.py                  # Streamlit Dashboard phân tích phản hồi sinh viên
+│   ├── app.py                  # Single-Page Bento Grid Dashboard phân tích phản hồi sinh viên
+│   └── ui_charts.py            # Giao diện Vibrant AI Gradient CSS & hệ thống biểu đồ Plotly tương tác
 ├── data/
 │   ├── download_data.py        # Tự động tải dataset Parquet từ Hugging Face
 │   ├── dataset.py              # Xử lý dữ liệu, tách từ PyVi và DataLoader PyTorch

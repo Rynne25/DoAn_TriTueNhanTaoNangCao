@@ -21,3 +21,5 @@ saved_models/phobert/*.safetensors
 Thumbs.db
 .vscode/
 .idea/
+
+scratch/

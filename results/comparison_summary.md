@@ -6,8 +6,8 @@
 
 | Mô hình | Sentiment Accuracy | Sentiment Macro-F1 | Topic Accuracy | Topic Macro-F1 | Tốc độ suy luận |
 |---|---|---|---|---|---|
-| **Classical Baseline (TF-IDF + LR)** | **87.81%** | **72.76%** | **82.66%** | **73.69%** | 48287.4 câu/s |
-| **PhoBERT Multi-Task (Đề xuất)** | **93.97%** | **84.29%** | **88.72%** | **80.30%** | 17.3 câu/s |
+| **Classical Baseline (TF-IDF + LR)** | **87.81%** | **72.76%** | **82.66%** | **73.69%** | 23887.9 câu/s |
+| **PhoBERT Multi-Task (Đề xuất)** | **93.97%** | **84.29%** | **88.72%** | **80.30%** | 16.8 câu/s |
 | **Mức cải thiện của PhoBERT** | **+6.16%** | **+11.53%** | **+6.06%** | **+6.62%** | — |
 
 ## 2. Phân Tích Lỗi Sai Tiêu Biểu (Error Analysis)

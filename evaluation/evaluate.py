@@ -12,7 +12,7 @@ sys.dont_write_bytecode = True
 import time
 from typing import Any, Dict, List
 
-from sklearn.metrics import accuracy_score, classification_report, f1_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score, precision_recall_fscore_support
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from data.dataset import SENTIMENT_LABELS, SENTIMENT_MAP, TOPIC_LABELS, TOPIC_MAP, load_vsfc_split
@@ -29,19 +29,52 @@ def evaluate_model(model, texts: List[str], sents: List[int], topics: List[int])
     s_acc = float(accuracy_score(sents, s_preds))
     s_wf1 = float(f1_score(sents, s_preds, average="weighted", zero_division=0))
     s_mf1 = float(f1_score(sents, s_preds, average="macro", zero_division=0))
-
     t_acc = float(accuracy_score(topics, t_preds))
     t_wf1 = float(f1_score(topics, t_preds, average="weighted", zero_division=0))
     t_mf1 = float(f1_score(topics, t_preds, average="macro", zero_division=0))
 
+    s_cm = confusion_matrix(sents, s_preds, labels=[0, 1, 2]).tolist()
+    t_cm = confusion_matrix(topics, t_preds, labels=[0, 1, 2, 3]).tolist()
+    s_p, s_r, s_f1, s_sup = precision_recall_fscore_support(sents, s_preds, labels=[0, 1, 2], zero_division=0)
+    t_p, t_r, t_f1, t_sup = precision_recall_fscore_support(topics, t_preds, labels=[0, 1, 2, 3], zero_division=0)
+
+    per_class_sent = {
+        lbl: {"precision": float(s_p[i]), "recall": float(s_r[i]), "f1": float(s_f1[i]), "support": int(s_sup[i])}
+        for i, lbl in enumerate(SENTIMENT_LABELS)
+    }
+    per_class_topic = {
+        lbl: {"precision": float(t_p[i]), "recall": float(t_r[i]), "f1": float(t_f1[i]), "support": int(t_sup[i])}
+        for i, lbl in enumerate(TOPIC_LABELS)
+    }
+
     return {
         "sent_acc": s_acc, "sent_wf1": s_wf1, "sent_mf1": s_mf1,
         "topic_acc": t_acc, "topic_wf1": t_wf1, "topic_mf1": t_mf1,
-        "mean_mf1": (s_mf1 + t_mf1) / 2.0,
-        "latency_sec": dt,
-        "speed": len(texts) / max(0.001, dt),
-        "s_preds": s_preds,
-        "t_preds": t_preds,
+        "mean_mf1": (s_mf1 + t_mf1) / 2.0, "latency_sec": dt, "speed": len(texts) / max(0.001, dt),
+        "s_preds": s_preds, "t_preds": t_preds, "s_cm": s_cm, "t_cm": t_cm,
+        "per_class_sent": per_class_sent, "per_class_topic": per_class_topic,
+    }
+
+
+def compute_dataset_stats(data_dir: str) -> Dict[str, Any]:
+    """Thống kê quy mô các tập dữ liệu và phân bố nhãn trên toàn bộ 16.175 câu UIT-VSFC."""
+    split_sizes: Dict[str, int] = {}
+    sent_counts = {lbl: 0 for lbl in SENTIMENT_LABELS}
+    topic_counts = {lbl: 0 for lbl in TOPIC_LABELS}
+
+    for split in ("train", "validation", "test"):
+        texts, sents, topics = load_vsfc_split(split, data_dir=data_dir, word_segment=False)
+        split_sizes[split] = len(texts)
+        for s in sents:
+            sent_counts[SENTIMENT_LABELS[int(s)]] += 1
+        for t in topics:
+            topic_counts[TOPIC_LABELS[int(t)]] += 1
+
+    split_sizes["total"] = sum(split_sizes.values())
+    return {
+        "split_sizes": split_sizes,
+        "sentiment_distribution": sent_counts,
+        "topic_distribution": topic_counts,
     }
 
 
@@ -127,10 +160,20 @@ def main():
 
     # 6. Lưu kết quả ra file
     os.makedirs("results", exist_ok=True)
+    skip_keys = {"s_preds", "t_preds", "s_cm", "t_cm", "per_class_sent", "per_class_topic"}
     summary_data = {
         "num_test_samples": len(texts),
-        "baseline": {k: v for k, v in b_res.items() if not k.endswith("_preds")},
-        "phobert": {k: v for k, v in p_res.items() if not k.endswith("_preds")},
+        "baseline": {k: v for k, v in b_res.items() if k not in skip_keys},
+        "phobert": {k: v for k, v in p_res.items() if k not in skip_keys},
+        "per_class": {
+            "baseline": {"sentiment": b_res["per_class_sent"], "topic": b_res["per_class_topic"]},
+            "phobert": {"sentiment": p_res["per_class_sent"], "topic": p_res["per_class_topic"]},
+        },
+        "confusion_matrix": {
+            "baseline": {"sentiment": b_res["s_cm"], "topic": b_res["t_cm"]},
+            "phobert": {"sentiment": p_res["s_cm"], "topic": p_res["t_cm"]},
+        },
+        "dataset_stats": compute_dataset_stats(args.data_dir),
         "error_analysis_samples": err_samples,
     }
     with open("results/metrics.json", "w", encoding="utf-8") as f:
