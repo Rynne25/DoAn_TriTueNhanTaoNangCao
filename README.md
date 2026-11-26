@@ -142,6 +142,11 @@ Từ kết quả chạy thực nghiệm trực tiếp của `evaluation/evaluate
 ├── results/
 │   ├── metrics.json            # File JSON chứa toàn bộ chỉ số thực nghiệm
 │   └── comparison_summary.md   # Báo cáo tóm tắt so sánh
-├── requirements.txt            # Thư viện phụ thuộc
-└── (3 file hồ sơ nộp đồ án: 1 slide .pptx + 2 báo cáo 15-20 trang .docx)
+├── slide/
+│   ├── Slide_BaoCao_DoAn_UIT_VSFC_English.pptx                 # Slide thuyết trình tiếng Anh
+│   └── Slide_BaoCao_DoAn_UIT_VSFC_TiengViet.pptx               # Slide thuyết trình tiếng Việt
+├── word/
+│   ├── BaoCao_DoAn_TextClassification_UIT_VSFC.docx            # Báo cáo đồ án tiếng Việt
+│   └── Report_Project_TextClassification_UIT_VSFC_English.docx # Báo cáo đồ án tiếng Anh
+└── requirements.txt            # Thư viện phụ thuộc
 ```
